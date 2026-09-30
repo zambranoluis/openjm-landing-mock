@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OpenJM — Live coded interaction demo</title>
+<style>
+  :root{
+    --radius:18px;
+    --perspective:1600px;
+    --stage-w:1910;
+    --stage-h:932;
+    --green:#24d6a1;
+    --teal:#18bda9;
+    --purple:#6d50ff;
+    --ink:#f5f6f5;
+    --muted:#748089;
+    --line:rgba(255,255,255,.085);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:transparent;color:white;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  body{min-height:100vh;display:grid;place-items:center;overflow:hidden;background:transparent}
+  .scene{position:relative;width:min(92vw,1380px);padding:0;perspective:var(--perspective);perspective-origin:50% 48%}
+  .card-wrap{position:relative;width:100%;aspect-ratio:1910/932;transform-style:preserve-3d;will-change:transform}
+  .depth{position:absolute;inset:12px -13px -17px 12px;border-radius:calc(var(--radius) + 2px);background:linear-gradient(145deg,#152025,#05080a 70%);border:1px solid rgba(255,255,255,.035);transform:translateZ(-34px);box-shadow:0 34px 88px rgba(0,0,0,.52)}
+  .floor-shadow{position:absolute;left:8%;right:2%;bottom:-10%;height:22%;border-radius:50%;background:rgba(0,0,0,.5);filter:blur(38px);transform:translateZ(-76px) rotateX(78deg);pointer-events:none}
+  .card{position:absolute;inset:0;overflow:hidden;border-radius:var(--radius);background:#070a0a;border:1px solid rgba(255,255,255,.08);box-shadow:0 52px 110px rgba(0,0,0,.64),0 18px 42px rgba(0,0,0,.36),0 0 78px rgba(0,231,197,.045);transform-style:preserve-3d;backface-visibility:hidden}
+  .stage-shell{position:absolute;inset:0;overflow:hidden}
+  #stage{position:absolute;left:0;top:0;width:1910px;height:932px;transform-origin:0 0;background:#050808;overflow:hidden}
+  .bg-svg{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.96}
+  .bg-reference{display:none !important;visibility:hidden;width:0;height:0}
+  .sidebar{position:absolute;left:0;top:0;bottom:0;z-index:5;width:46px;padding:14px 6px 16px;display:flex;flex-direction:column;align-items:center;border-right:1px solid rgba(255,255,255,.055);background:linear-gradient(180deg,rgba(19,24,25,.96),rgba(8,12,13,.96));box-shadow:10px 0 30px rgba(0,0,0,.18)}
+  .brand{width:30px;height:30px;margin-bottom:12px;display:grid;place-items:center}
+  .nav-stack{display:flex;flex-direction:column;gap:12px;width:100%;align-items:center}
+  .nav-sep{width:28px;height:1px;background:rgba(255,255,255,.06);margin:2px 0 5px}
+  .nav-item{width:34px;height:34px;border-radius:5px;display:grid;place-items:center;color:#a5afb2;opacity:.9}
+  .nav-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .nav-item.active{background:#151d1f;color:#39dca7}
+  .logout{margin-top:auto;color:#ff4d5c}
+  .intro{position:absolute;z-index:4;left:46px;right:0;top:0;bottom:0;transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+  .intro.hidden{opacity:0;transform:translateY(-18px);pointer-events:none}
+  .hero-copy{position:absolute;left:50%;top:43.5%;transform:translate(-50%,-50%);width:900px;text-align:center}
+  .hero-title{font-size:35px;font-weight:760;line-height:1.05;letter-spacing:-1.25px;color:#f7f7f6;margin:0 0 8px}
+  .hero-sub{font-size:12px;color:#566379;letter-spacing:.02em;margin:0}
+  .composer{position:absolute;width:610px;height:40px;left:50%;top:52.0%;transform:translateX(-50%);border:1px solid rgba(232,238,235,.38);border-radius:20px;background:#101414;box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);overflow:hidden;transition:height .48s cubic-bezier(.2,.72,.2,1),border-radius .48s cubic-bezier(.2,.72,.2,1),box-shadow .42s ease}
+  .composer.active{height:84px;border-radius:22px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.025),0 9px 28px rgba(0,0,0,.10)}
+  .composer-text{position:absolute;left:46px;top:7px;right:145px;height:25px;font-size:11.5px;line-height:25px;color:#dfe6e3;white-space:nowrap;overflow:hidden;transition:top .42s cubic-bezier(.2,.72,.2,1),right .42s cubic-bezier(.2,.72,.2,1),left .42s cubic-bezier(.2,.72,.2,1),color .25s ease}
+  .composer:not(.active) .composer-text:empty::before{content:"Ask a question...";color:#454e51}
+  .composer.active .composer-text{top:10px;left:38px;right:96px}
+  .typed::after{content:"";display:inline-block;width:1px;height:15px;background:#cfd6d4;margin-left:2px;vertical-align:-3px;animation:blink .9s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .composer-count{position:absolute;right:34px;top:13px;font-size:9px;color:#677173;letter-spacing:.01em;opacity:0;transition:opacity .28s ease}
+  .composer.active .composer-count{opacity:1}
+  .composer-plus{position:absolute;left:18px;top:10px;font-size:30px;font-weight:200;line-height:18px;color:#d5d9d7;transition:top .42s cubic-bezier(.2,.72,.2,1)}
+  .composer.active .composer-plus{top:47px}
+  .composer-actions{position:absolute;right:13px;top:8px;display:flex;gap:9px;align-items:center;transition:top .42s cubic-bezier(.2,.72,.2,1)}
+  .composer.active .composer-actions{top:46px}
+  .mode-pill{height:20px;padding:0 8px;border-radius:11px;background:#101715;border:1px solid rgba(255,255,255,.08);font-size:8px;color:#8d9895;display:flex;gap:5px;align-items:center}
+  .mode-pill .deep{color:#2ad79e}
+  .composer-prep{position:absolute;left:40px;top:47px;display:flex;gap:8px;opacity:0;transform:translateY(5px);transition:opacity .32s ease,transform .32s ease}
+  .composer.has-prep .composer-prep{opacity:1;transform:none}
+  .prep-pill{height:18px;padding:0 8px;border-radius:9px;background:#17191d;border:1px solid rgba(255,255,255,.08);font-size:7.8px;color:#bcc4c2;display:flex;align-items:center;gap:5px;letter-spacing:.01em;box-shadow:inset 0 1px 0 rgba(255,255,255,.02)}
+  .prep-pill.image{background:#21182f;border-color:rgba(151,100,255,.25);color:#ddd0ff}
+  .prep-pill.image .prep-icon{color:#a37cff}
+  .prep-pill.negative{background:#15181c;color:#bbc2bf}
+  .prep-icon{display:inline-flex;align-items:center;justify-content:center;width:11px;height:11px;color:#94a09c;opacity:.92}
+  .prep-icon svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .prep-caret{color:#6f7a77;font-size:8px;transform:translateY(-.5px)}
+  .send-icon{width:17px;height:17px;opacity:.45}
+  .status-pill{position:absolute;left:50%;top:52.1%;transform:translateX(-50%);width:346px;height:34px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:10.5px;color:#5d6870;background:#0d1112;border:1px solid rgba(230,236,234,.34);opacity:0;overflow:hidden;transition:opacity .35s ease}
+  .status-pill.show{opacity:1}
+  .status-pill::after{content:"";position:absolute;left:-22%;bottom:-1px;width:38%;height:2px;background:linear-gradient(90deg,transparent,#5d48ff,#31d2a8,transparent);filter:blur(.1px);animation:statusRun 2.2s ease-in-out infinite}
+  @keyframes statusRun{0%{left:-25%;opacity:0}18%{opacity:1}75%{left:87%;opacity:1}100%{left:110%;opacity:0}}
+  .conversation{position:absolute;z-index:4;left:618px;top:118px;width:770px;height:690px;overflow:hidden;opacity:0;transform:translateY(12px);transition:opacity .7s ease,transform .7s ease}
+  .conversation.show{opacity:1;transform:none}
+  .conversation-inner{position:absolute;left:0;top:0;width:100%;will-change:transform}
+  .user-row{display:flex;justify-content:flex-end;margin:0 0 50px}
+  .user-bubble{width:535px;border-radius:12px;background:#242424;border:1px solid rgba(255,255,255,.03);padding:17px 18px 12px;color:#f2f2ef;box-shadow:0 5px 16px rgba(0,0,0,.18)}
+  .user-text{font-size:12.5px;line-height:1.35}
+  .user-meta{display:flex;justify-content:flex-end;gap:12px;color:#d2d5d3;font-size:8px;margin-top:12px;opacity:.78}
+  .think-box{font-size:12.6px;line-height:1.42;color:#9ac7ae;margin-bottom:16px}
+  .think-label{display:flex;align-items:center;gap:7px;color:#40c991;font-weight:700;margin-bottom:7px}
+  .think-label svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.7}
+  .answer{font-size:13px;line-height:1.47;color:#e4e6e4}
+  .answer p{margin:0 0 8px}
+  .answer h3{font-size:14px;line-height:1.25;color:#f1f2f1;margin:10px 0 8px;padding-top:9px;border-top:1px solid rgba(255,255,255,.09);font-weight:780}
+  .answer h4{font-size:13px;color:#f0f1f0;margin:9px 0 7px;font-weight:760}
+  .answer .indent{padding-left:16px}
+  .answer em{color:#dbdddb}
+  .answer b{font-weight:760;color:#f1f2f1}
+  .answer .table-wrap{border:1px solid rgba(255,255,255,.12);border-radius:10px;overflow:hidden;margin:9px 0 11px}
+  .answer table{width:100%;border-collapse:collapse;font-size:12px;background:#0c0f12}
+  .answer th,.answer td{padding:10px 11px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
+  .answer th{font-size:10px;color:#e3e6e4;background:#0a0d10;text-transform:uppercase;letter-spacing:.03em}
+  .answer tr:last-child td{border-bottom:none}
+  .assistant-meta{margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08);font-size:8px;color:#c3c9c6;display:flex;justify-content:space-between;align-items:center}
+  .meta-actions{display:flex;gap:12px;font-weight:650}
+  .workline{font-size:8px;color:#d0d3d2;margin-top:7px;font-weight:650}
+  .tokenline{font-size:7.5px;color:#7d8683;margin-top:3px}
+  .bottom-area{position:absolute;z-index:7;left:46px;right:0;bottom:10px;height:63px;display:flex;align-items:flex-end;justify-content:center;pointer-events:none}
+  .bottom-disclaimer{position:absolute;bottom:48px;font-size:9px;color:#41494c;letter-spacing:.01em}
+  .bottom-status{position:absolute;bottom:2px;width:346px;height:34px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:10.5px;color:#5d6870;background:#0d1112;border:1px solid rgba(230,236,234,.34);overflow:hidden;opacity:0;transition:opacity .3s ease}
+  .bottom-status.show{opacity:1}
+  .bottom-status::after{content:"";position:absolute;left:-25%;bottom:-1px;width:36%;height:2px;background:linear-gradient(90deg,transparent,#6653ff,#2ed5a4,transparent);animation:statusRun 2.2s ease-in-out infinite}
+  .chat-composer{position:absolute;bottom:0;width:612px;height:39px;border-radius:20px;border:1px solid rgba(228,234,231,.35);background:#0f1313;display:flex;align-items:center;opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s ease;pointer-events:auto}
+  .chat-composer.show{opacity:1;transform:none}
+  .chat-plus{width:38px;text-align:center;font-size:29px;font-weight:200;color:#ced4d1}
+  .chat-placeholder{flex:1;font-size:9.5px;color:#454e51}
+  .chat-right{display:flex;align-items:center;gap:8px;padding-right:12px}
+  .chat-mini{height:21px;border-radius:12px;padding:0 8px;border:1px solid rgba(255,255,255,.08);font-size:8px;color:#7d8784;display:flex;align-items:center;gap:5px}
+  .chat-mini b{color:#26cf98;font-weight:600}
+  .page-scroll{position:absolute;right:7px;top:95px;width:4px;height:738px;border-radius:2px;background:rgba(255,255,255,.02);z-index:6;opacity:0;transition:opacity .5s ease}
+  .page-scroll.show{opacity:1}
+  .page-scroll-thumb{position:absolute;left:0;width:4px;height:110px;border-radius:2px;background:#40464a;top:0}
+  #particleCanvas{position:absolute;inset:0;width:1910px;height:932px;z-index:10;pointer-events:none}
+  .glass{position:absolute;inset:0;z-index:18;pointer-events:none;background:linear-gradient(116deg,rgba(255,255,255,.055) 0%,rgba(255,255,255,.012) 13%,transparent 29%,transparent 76%,rgba(0,255,211,.008) 100%);mix-blend-mode:screen;opacity:.24}
+  .edge{position:absolute;inset:0;z-index:19;pointer-events:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.13),inset 0 -1px 0 rgba(255,255,255,.03)}
+  @media(max-width:760px){.scene{width:94vw;padding:0}:root{--radius:12px}}
+  @media(max-height:650px){.scene{width:min(92vw,1200px);padding:0}}
+  @media(prefers-reduced-motion:reduce){.card-wrap{transform:rotateX(3.5deg) rotateY(-6deg)!important}.typed::after{animation:none}.status-pill::after,.bottom-status::after{animation:none}}
+
+  .conversation{left:500px;top:120px;width:860px;height:708px;overflow:visible;opacity:0;transform:translateY(12px);transition:opacity .7s ease,transform .7s ease}
+  .conversation.show{opacity:1;transform:none}
+  .conversation-inner.gen-thread{position:relative;width:100%;height:100%;overflow:visible}
+  .gen-user-row{position:absolute;right:0;top:34px;display:flex;justify-content:flex-end;opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease}
+  .conversation.show .gen-user-row{opacity:1;transform:none}
+  .gen-user-bubble{width:338px;border-radius:13px;background:#242428;border:1px solid rgba(255,255,255,.04);padding:16px 18px 12px;color:#f2f2ef;box-shadow:0 10px 28px rgba(0,0,0,.18)}
+  .gen-user-text{font-size:12.5px;line-height:1.34;color:#f3f4f2}
+  .gen-user-meta{display:flex;justify-content:flex-end;gap:12px;color:#cfd2d1;font-size:8px;margin-top:11px;opacity:.76}
+  .gen-result-card{position:absolute;left:42px;top:152px;width:692px;height:584px;border-radius:18px;background:linear-gradient(180deg,#181a20 0%,#161920 100%);border:1px solid rgba(255,255,255,.06);box-shadow:0 26px 56px rgba(0,0,0,.34);opacity:0;transform:translateY(20px) scale(.985);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+  .gen-result-card.show{opacity:1;transform:none}
+  .gen-result-stage{position:absolute;left:73px;top:26px;width:474px;height:454px;border-radius:12px;background:#10131a;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)}
+  .gen-result-stage::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(255,255,255,.06),transparent 55%),linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.005));opacity:calc(1 - var(--reveal,0));transition:opacity .3s ease}
+  .gen-result-stage::after{content:"";position:absolute;left:-36%;top:0;bottom:0;width:32%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);filter:blur(8px);opacity:calc((1 - var(--reveal,0)) * .7);transform:translateX(calc(var(--shimmer,0) * 520px));transition:opacity .3s ease}
+  .gen-result-image-wrap{position:absolute;inset:0;border-radius:12px;overflow:hidden;clip-path:inset(calc((1 - var(--reveal,0)) * 100%) 0 0 0 round 12px)}
+  .gen-result-image{width:100%;height:100%;display:block;object-fit:cover;object-position:center center;image-rendering:pixelated}
+  .gen-card-label{position:absolute;left:16px;bottom:66px;font-size:10px;font-weight:700;color:#eceeec;letter-spacing:.01em}
+  .gen-card-actions{position:absolute;left:16px;bottom:36px;display:flex;gap:14px;font-size:8px;color:#b7bcb9;opacity:var(--meta,0);transform:translateY(calc((1 - var(--meta,0)) * 8px));transition:opacity .3s ease,transform .3s ease}
+  .gen-card-actions span{display:flex;align-items:center;gap:5px;white-space:nowrap}
+  .gen-card-actions .accent{color:#dbdfdc}
+  .gen-card-stamp{position:absolute;right:16px;bottom:37px;font-size:8px;color:rgba(230,234,232,.78);opacity:var(--meta,0);transform:translateY(calc((1 - var(--meta,0)) * 8px));transition:opacity .3s ease,transform .3s ease}
+  .gen-card-work{position:absolute;left:16px;bottom:12px;font-size:8px;color:#9ca4a1;opacity:var(--meta,0);transition:opacity .3s ease}
+  .gen-card-work b{font-weight:600;color:#d5d9d7}
+  .gen-card-frame{position:absolute;inset:0;border-radius:18px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+  .page-scroll{display:none !important}
+  .composer-menu{position:absolute;left:50%;top:42.9%;width:98px;transform:translateX(-305px) translateY(10px) scale(.97);transform-origin:0 100%;border-radius:11px;background:linear-gradient(180deg,#1b1f23 0%,#171a1e 100%);border:1px solid rgba(255,255,255,.07);box-shadow:0 18px 40px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.03);opacity:0;pointer-events:none;transition:opacity .28s ease,transform .34s cubic-bezier(.22,.8,.22,1);z-index:8;padding:6px}
+  .composer-menu.show{opacity:1;transform:translateX(-305px) translateY(0) scale(1)}
+  .composer-menu-item{height:26px;border-radius:7px;padding:0 8px;display:flex;align-items:center;gap:7px;font-size:8.6px;color:#afb7b7;border:1px solid transparent;margin-bottom:4px}
+  .composer-menu-item:last-child{margin-bottom:0}
+  .composer-menu-item svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .composer-menu-item.active{background:#183128;border-color:rgba(47,197,139,.14);color:#d8fbe8;box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+  .composer-panel{position:absolute;left:50%;top:35.3%;width:414px;height:322px;transform:translateX(-305px) translateY(12px) scale(.965);transform-origin:0 100%;border-radius:15px;background:linear-gradient(180deg,#1a1d22 0%,#16191d 100%);border:1px solid rgba(255,255,255,.07);box-shadow:0 26px 60px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.03);opacity:0;pointer-events:none;transition:opacity .42s ease,transform .5s cubic-bezier(.22,.8,.22,1);z-index:8;overflow:hidden}
+  .composer-panel.show{opacity:1;transform:translateX(-305px) translateY(0) scale(1)}
+  .panel-side{position:absolute;left:0;top:0;bottom:0;width:112px;border-right:1px solid rgba(255,255,255,.05);padding:142px 11px 12px;background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,.005))}
+  .panel-upload{position:absolute;left:12px;bottom:120px;right:12px;font-size:8.4px;color:#b1b8b8;display:flex;align-items:center;gap:7px;opacity:.9}
+  .panel-upload svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:1.7}
+  .panel-side-item{height:30px;border-radius:7px;padding:0 10px;display:flex;align-items:center;gap:8px;font-size:8.6px;color:#afb7b7;margin-bottom:8px;border:1px solid transparent}
+  .panel-side-item svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:1.6}
+  .panel-side-item.active{background:#183128;border-color:rgba(47,197,139,.14);color:#d8fbe8;box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+  .panel-main{position:absolute;left:112px;top:0;right:0;bottom:0;padding:10px 16px 14px}
+  .panel-top{display:flex;align-items:center;gap:8px;margin-bottom:2px}
+  .panel-back{font-size:13px;color:#72797d;line-height:1;margin-right:4px}
+  .panel-title{font-size:13px;font-weight:700;color:#eff2f0;letter-spacing:-.01em}
+  .panel-badge{margin-left:auto;height:17px;padding:0 7px;border-radius:10px;border:1px solid rgba(47,197,139,.15);background:#182925;font-size:8px;color:#d8fbe8;display:flex;align-items:center;gap:4px}
+  .panel-badge::before{content:"";width:5px;height:5px;border-radius:50%;background:#2fc58b}
+  .panel-sub{font-size:8.3px;color:#7d8589;margin:0 0 10px 25px}
+  .panel-label{font-size:8.4px;color:#c2c8c6;margin:4px 0 8px}
+  .size-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+  .size-card{height:70px;border-radius:8px;background:#21252b;border:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ccd2d0;gap:5px;transition:border-color .2s ease,background .2s ease,box-shadow .2s ease}
+  .size-card.active{background:#23372f;border-color:rgba(47,197,139,.34);box-shadow:inset 0 0 0 1px rgba(47,197,139,.1)}
+  .size-card-icon{border:1.4px solid currentColor;border-radius:2px;opacity:.9}
+  .size-card.active .size-card-icon{color:#80e7bb}
+  .size-card strong{font-size:9px;line-height:1.1;font-weight:600;text-align:center}
+  .size-card span{font-size:8px;color:#7e868a}
+  .panel-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+  .panel-field label{display:block;font-size:8.3px;color:#c6ccc9;margin-bottom:4px}
+  .panel-field .box{height:32px;border-radius:7px;border:1px solid rgba(255,255,255,.07);background:#121519;padding:0 9px;display:flex;align-items:center;font-size:9px;color:#e8ece9}
+  .panel-note{font-size:7.6px;line-height:1.35;color:#727a7f;margin-top:8px;max-width:250px}
+
+</style>
+</head>
+<body>
+<main class="scene" id="scene">
+  <div class="card-wrap" id="cardWrap">
+    <div class="floor-shadow"></div>
+    <div class="depth"></div>
+    <section class="card" id="card">
+      <div class="stage-shell" id="stageShell">
+        <div id="stage">
+          <svg class="bg-svg" viewBox="0 0 1910 932" preserveAspectRatio="none" aria-hidden="true">
+            <rect width="1910" height="932" fill="#050808"/>
+            <path d="M46 0H1910V210C1754 214 1677 109 1515 83C1300 48 1165 110 988 84C817 59 713 11 532 38C397 58 328 140 269 232C213 320 153 411 46 428Z" fill="#090d0e"/>
+            <path d="M46 0H501C430 32 399 90 359 153C303 241 235 337 151 393C112 419 75 430 46 431Z" fill="#111517" opacity=".97"/>
+            <path d="M46 0H178C155 56 129 101 93 132C76 147 60 154 46 157Z" fill="#161a1c" opacity=".72"/>
+            <path d="M1560 0H1910V256C1860 241 1816 205 1788 160C1746 94 1678 30 1560 0Z" fill="#0a0e0f" opacity=".96"/>
+          </svg>
+          <!-- Original reference image disabled for the transparent hero integration.
+
+          <img class="bg-reference" alt="" aria-hidden="true" src="../media/hero-reference.jpg"/>
+
+
+          -->
+          <aside class="sidebar" aria-label="OpenJM navigation">
+            <div class="brand" aria-hidden="true">
+              <svg viewBox="0 0 32 32" width="26" height="26">
+                <path d="M5 9.5 15 13l-2.1 6.4L5 9.5Z" fill="#52c8b1" opacity=".92"/>
+                <path d="M15 13 27 7l-7.7 9.1L15 13Z" fill="#73bde0" opacity=".92"/>
+                <path d="M13 19.4 19.3 16 17 27l-4-7.6Z" fill="#d5bf75" opacity=".9"/>
+                <circle cx="18.8" cy="13.6" r="1.35" fill="#f5f6f4"/>
+              </svg>
+            </div>
+            <div class="nav-stack">
+              <div class="nav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M6.5 19c.8-4 10.2-4 11 0"/></svg></div>
+              <div class="nav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.5 1a8 8 0 0 0-1.7-1L14.4 3h-4.8l-.3 3.1a8 8 0 0 0-1.7 1l-2.5-1-2 3.4L5.1 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.5-1a8 8 0 0 0 1.7 1l.3 3.1h4.8l.3-3.1a8 8 0 0 0 1.7-1l2.5 1 2-3.4-2-1.5a7 7 0 0 0 .1-1Z"/></svg></div>
+              <div class="nav-sep"></div>
+              <div class="nav-item"><svg viewBox="0 0 24 24"><path d="M5 5h14v10H9l-4 4V5Z"/><path d="M15 8h2M15 11h2"/></svg></div>
+              <div class="nav-item active"><svg viewBox="0 0 24 24"><path d="M5 5h14v10H9l-4 4V5Z"/><path d="m15 10 2 2 3-4"/></svg></div>
+              <div class="nav-item"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg></div>
+            </div>
+            <div class="nav-item logout"><svg viewBox="0 0 24 24"><path d="M10 5H5v14h5"/><path d="M13 8l4 4-4 4M17 12H9"/></svg></div>
+          </aside>
+
+          <div class="intro" id="intro">
+            <div class="hero-copy">
+              <h1 class="hero-title">Intelligence That Stays With You</h1>
+              <p class="hero-sub">Born in the Caribbean. Built to remember your world, think alongside you, and turn every idea into forward motion.</p>
+            </div>
+            <div class="composer" id="heroComposer">
+              <div class="composer-text typed" id="typedPrompt"></div>
+              <div class="composer-count" id="composerCount">0/4000</div>
+              <div class="composer-prep" id="composerPrep">
+                <div class="prep-pill image"><span class="prep-icon"><svg viewBox="0 0 24 24"><rect x="4.5" y="5" width="15" height="14" rx="2.2"/><circle cx="10" cy="10" r="1.5"/><path d="m8 16 3.1-3.2 2.3 2.1 2.6-2.8 2 3.9"/></svg></span><span>Image</span><span class="prep-caret">⌄</span></div>
+                <div class="prep-pill negative"><span>Negative prompt</span><span class="prep-caret">⌄</span></div>
+              </div>
+              <div class="composer-plus">+</div>
+              <div class="composer-actions">
+                <div class="mode-pill"><span class="deep">◉ Deep</span><span>rahkia-v1⌄</span></div>
+                <svg class="send-icon" viewBox="0 0 24 24"><path d="M3 11.5 21 4l-7.5 17-2.3-6.7L3 11.5Z" fill="none" stroke="#b5bebb" stroke-width="1.4" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+            <div class="composer-menu" id="composerMenu">
+              <div class="composer-menu-item active"><svg viewBox="0 0 24 24"><rect x="4.5" y="5" width="15" height="14" rx="2.2"/><circle cx="10" cy="10" r="1.5"/><path d="m8 16 3.1-3.2 2.3 2.1 2.6-2.8 2 3.9"/></svg><span>Image</span></div>
+              <div class="composer-menu-item"><svg viewBox="0 0 24 24"><path d="M8 18V7.5a1 1 0 0 1 1.55-.84L18 12l-8.45 5.34A1 1 0 0 1 8 16.5Z"/></svg><span>Music</span></div>
+              <div class="composer-menu-item"><svg viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="10" rx="2"/><path d="m11 10 4 2-4 2Z"/></svg><span>Video</span></div>
+            </div>
+            <div class="composer-panel" id="composerPanel">
+              <div class="panel-side">
+                <div class="panel-upload"><svg viewBox="0 0 24 24"><path d="M12 16V6"/><path d="m8.5 9.5 3.5-3.5 3.5 3.5"/><path d="M5 18h14"/></svg><span>Upload Files</span></div>
+                <div class="panel-side-item active"><svg viewBox="0 0 24 24"><rect x="4.5" y="5" width="15" height="14" rx="2.2"/><circle cx="10" cy="10" r="1.5"/><path d="m8 16 3.1-3.2 2.3 2.1 2.6-2.8 2 3.9"/></svg><span>Image</span></div>
+                <div class="panel-side-item"><svg viewBox="0 0 24 24"><path d="M8 18V7.5a1 1 0 0 1 1.55-.84L18 12l-8.45 5.34A1 1 0 0 1 8 16.5Z"/></svg><span>Music</span></div>
+                <div class="panel-side-item"><svg viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="10" rx="2"/><path d="m11 10 4 2-4 2Z"/></svg><span>Video</span></div>
+              </div>
+              <div class="panel-main">
+                <div class="panel-top"><div class="panel-back">‹</div><div class="panel-title">Image generation</div><div class="panel-badge">Active</div></div>
+                <div class="panel-sub">Generate an image from your prompt.</div>
+                <div class="panel-label">Image size</div>
+                <div class="size-grid">
+                  <div class="size-card active" data-size="11"><div class="size-card-icon" style="width:20px;height:20px"></div><strong>Social post</strong><span>1:1</span></div>
+                  <div class="size-card" data-size="45"><div class="size-card-icon" style="width:18px;height:22px"></div><strong>Social feed</strong><span>4:5</span></div>
+                  <div class="size-card" data-size="34"><div class="size-card-icon" style="width:16px;height:22px"></div><strong>Social portrait</strong><span>3:4</span></div>
+                  <div class="size-card" data-size="191"><div class="size-card-icon" style="width:22px;height:12px"></div><strong>Link preview</strong><span>1.91:1</span></div>
+                  <div class="size-card" data-size="916"><div class="size-card-icon" style="width:11px;height:22px"></div><strong>Stories &amp; Reels</strong><span>9:16</span></div>
+                  <div class="size-card" data-size="169"><div class="size-card-icon" style="width:22px;height:12px"></div><strong>Wallpaper &amp; video</strong><span>16:9</span></div>
+                </div>
+                <div class="panel-fields">
+                  <div class="panel-field"><label>Steps</label><div class="box">60</div></div>
+                  <div class="panel-field"><label>Seed</label><div class="box">Random</div></div>
+                </div>
+                <div class="panel-note">Intelligence level sets these values by default. Typing custom values overrides default values.</div>
+              </div>
+            </div>
+            <div class="status-pill" id="heroStatus">Generating image...</div>
+          </div>
+
+          <div class="conversation" id="conversation">
+            <div class="conversation-inner gen-thread" id="conversationInner">
+              <div class="gen-user-row" id="genUserRow">
+                <div class="gen-user-bubble">
+                  <div class="gen-user-text">create an image of a beach at sunset in pixel art style</div>
+                  <div class="gen-user-meta"><span>▣</span><span>09/21/2026 08:50 AM</span></div>
+                </div>
+              </div>
+              <div class="gen-result-card" id="resultCard">
+                <div class="gen-result-stage" id="resultStage">
+                  <div class="gen-result-image-wrap" id="resultImageWrap">
+                    <img class="gen-result-image" alt="Generated pixel art beach scene" src="../media/hero-generated-beach.png" />
+                  </div>
+                </div>
+                <div class="gen-card-label">Generated image</div>
+                <div class="gen-card-actions" id="resultActions">
+                  <span class="accent">◉ Thought</span>
+                  <span>❝ Quotes</span>
+                  <span>❝ Sources</span>
+                  <span>▣ Copy</span>
+                  <span>⇩ Download</span>
+                </div>
+                <div class="gen-card-stamp" id="resultStamp">09/21/2026 08:50 AM</div>
+                <div class="gen-card-work" id="resultWork">Worked for 0m 28s&nbsp;&nbsp;<b>Tokens unavailable for image generation</b></div>
+                <div class="gen-card-frame"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="page-scroll" id="pageScroll"><div class="page-scroll-thumb" id="pageThumb"></div></div>
+
+          <div class="bottom-area" id="bottomArea">
+            <div class="bottom-disclaimer">OpenJM can make mistakes. Check what matters.</div>
+            <div class="bottom-status" id="bottomStatus">Generating image...</div>
+            <div class="chat-composer" id="chatComposer">
+              <div class="chat-plus">+</div>
+              <div class="chat-placeholder">Ask a question...</div>
+              <div class="chat-right">
+                <div class="chat-mini"><b>◉ Deep</b><span>rahkia-v1⌄</span></div>
+                <svg width="17" height="17" viewBox="0 0 24 24"><path d="M3 11.5 21 4l-7.5 17-2.3-6.7L3 11.5Z" fill="none" stroke="#6f7976" stroke-width="1.4" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <canvas id="particleCanvas" width="1910" height="932" aria-hidden="true"></canvas>
+        </div>
+      </div>
+      <div class="glass"></div>
+      <div class="edge"></div>
+    </section>
+  </div>
+</main>
+
+<script>
+(() => {
+  const scene = document.getElementById('scene');
+  const card = document.getElementById('cardWrap');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let hovering = false;
+  let targetX = 3.8, targetY = -7.0;
+  let currentX = targetX, currentY = targetY;
+  const startedAt = performance.now();
+  scene.addEventListener('pointerenter', () => hovering = true);
+  scene.addEventListener('pointermove', e => {
+    hovering = true;
+    const r = scene.getBoundingClientRect();
+    const px = (e.clientX-r.left)/r.width;
+    const py = (e.clientY-r.top)/r.height;
+    targetY = (px-.5)*19;
+    targetX = (.5-py)*12;
+  });
+  scene.addEventListener('pointerleave', () => hovering = false);
+  function animateTilt(now){
+    if(!reduceMotion){
+      if(!hovering){
+        const t=(now-startedAt)/1000;
+        targetX=3.7+Math.sin(t*.45)*.75;
+        targetY=-7+Math.sin(t*.34)*1.25;
+      }
+      currentX += (targetX-currentX)*.07;
+      currentY += (targetY-currentY)*.07;
+      card.style.transform=`rotateX(${currentX.toFixed(3)}deg) rotateY(${currentY.toFixed(3)}deg)`;
+    }
+    requestAnimationFrame(animateTilt);
+  }
+  requestAnimationFrame(animateTilt);
+})();
+
+(() => {
+  const STAGE_W=1910, STAGE_H=932;
+  const shell=document.getElementById('stageShell');
+  const stage=document.getElementById('stage');
+  function fit(){
+    const scale=Math.min(shell.clientWidth/STAGE_W,shell.clientHeight/STAGE_H);
+    stage.style.transform=`scale(${scale})`;
+  }
+  new ResizeObserver(fit).observe(shell); fit();
+})();
+
+const PROMPT='create an image of a beach at sunset in pixel art style';
+
+const els={
+  intro:document.getElementById('intro'),
+  typed:document.getElementById('typedPrompt'),
+  heroComposer:document.getElementById('heroComposer'),
+  composerCount:document.getElementById('composerCount'),
+  composerMenu:document.getElementById('composerMenu'),
+  composerPanel:document.getElementById('composerPanel'),
+  sizeCards:Array.from(document.querySelectorAll('.size-card')),
+  heroStatus:document.getElementById('heroStatus'),
+  conversation:document.getElementById('conversation'),
+  userRow:document.getElementById('genUserRow'),
+  resultCard:document.getElementById('resultCard'),
+  resultStage:document.getElementById('resultStage'),
+  resultImageWrap:document.getElementById('resultImageWrap'),
+  resultActions:document.getElementById('resultActions'),
+  resultStamp:document.getElementById('resultStamp'),
+  resultWork:document.getElementById('resultWork'),
+  bottomStatus:document.getElementById('bottomStatus'),
+  chatComposer:document.getElementById('chatComposer'),
+  pageScroll:document.getElementById('pageScroll')
+};
+
+const TL={
+  idleEnd:1.2,
+  composeOpen:2.1,
+  menuOpen:2.8,
+  menuClose:3.9,
+  panelOpen:4.1,
+  panelPick1:4.9,
+  panelPick2:5.7,
+  panelPick3:6.5,
+  panelClose:7.4,
+  typeStart:8.05,
+  typeEnd:11.6,
+  send:12.0,
+  heroStatusEnd:13.9,
+  chatShow:13.2,
+  cardShow:14.2,
+  revealStart:15.15,
+  revealEnd:15.18,
+  footerShow:15.45,
+  bottomStatusEnd:15.9,
+  composerReturn:15.7
+};
+
+function promptCountAt(t){
+  if(t<=TL.typeStart)return 0;
+  if(t>=TL.typeEnd)return PROMPT.length;
+  const p=(t-TL.typeStart)/(TL.typeEnd-TL.typeStart);
+  const eased=1-Math.pow(1-p,1.18);
+  return Math.max(0,Math.min(PROMPT.length,Math.floor(eased*PROMPT.length)));
+}
+function setActiveSize(key){
+  els.sizeCards.forEach(card=>card.classList.toggle('active',card.dataset.size===key));
+}
+function escapePrompt(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function smoothstep(a,b,x){const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t)}
+function renderTimeline(t){
+  const active=t>=TL.composeOpen && t<TL.send;
+  const menuVisible=t>=TL.menuOpen && t<TL.menuClose;
+  const panelVisible=t>=TL.panelOpen && t<TL.panelClose;
+  const hasPrep=t>=TL.panelClose && t<TL.send;
+  els.heroComposer.classList.toggle('active',active);
+  els.heroComposer.classList.toggle('has-prep',hasPrep);
+  els.composerMenu.classList.toggle('show',menuVisible);
+  els.composerPanel.classList.toggle('show',panelVisible);
+
+  let sizeKey='11';
+  if(t>=TL.panelPick3 || t>=TL.panelClose) sizeKey='34';
+  else if(t>=TL.panelPick2) sizeKey='45';
+  else if(t>=TL.panelPick1) sizeKey='11';
+  setActiveSize(sizeKey);
+
+  const count=promptCountAt(t);
+  els.composerCount.textContent=`${count}/4000`;
+  els.typed.innerHTML=escapePrompt(PROMPT.slice(0,count));
+  els.typed.classList.toggle('typed',t>=TL.typeStart && t<TL.typeEnd+.18);
+
+  const sending=t>=TL.send;
+  els.heroComposer.style.opacity=sending?'0':'1';
+  els.heroStatus.textContent='Generating image...';
+  els.bottomStatus.textContent='Generating image...';
+  els.heroStatus.classList.toggle('show',sending && t<TL.heroStatusEnd);
+  els.intro.classList.toggle('hidden',t>=TL.chatShow);
+
+  const chatShow=t>=TL.chatShow;
+  els.conversation.classList.toggle('show',chatShow);
+  els.pageScroll.classList.remove('show');
+  els.bottomStatus.classList.toggle('show',chatShow && t<TL.bottomStatusEnd);
+  els.chatComposer.classList.toggle('show',t>=TL.composerReturn);
+
+  const cardShow=t>=TL.cardShow;
+  els.resultCard.classList.toggle('show',cardShow);
+
+  const reveal=t>=TL.revealStart?1:0;
+  const meta=smoothstep(TL.footerShow,TL.footerShow+.35,t);
+  const shimmer=(Math.sin(t*1.3)+1)*.5;
+  els.resultCard.style.setProperty('--reveal',reveal.toFixed(4));
+  els.resultCard.style.setProperty('--meta',meta.toFixed(4));
+  els.resultCard.style.setProperty('--shimmer',shimmer.toFixed(4));
+  els.resultWork.innerHTML=t>=TL.footerShow ? 'Worked for 0m 2s&nbsp;&nbsp;<b>Tokens unavailable for image generation</b>' : 'Working on image generation...';
+}
+
+// Morph engine adapted from the supplied standby / thinking particle exports.
+// Only the particle behavior is replaced; the surrounding UI and copy remain untouched.
+(() => {
+  const canvas=document.getElementById('particleCanvas');
+  const ctx=canvas.getContext('2d',{alpha:true});
+  const W=1910,H=932,N=1500;
+  const golden=Math.PI*(3-Math.sqrt(5));
+
+  const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  const ease=t=>.5-.5*Math.cos(clamp(t)*Math.PI);
+  const hexToRgb=hex=>({r:parseInt(hex.slice(1,3),16),g:parseInt(hex.slice(3,5),16),b:parseInt(hex.slice(5,7),16)});
+  const rgbToCss=(a,b,t,alpha)=>{
+    const c1=hexToRgb(a),c2=hexToRgb(b);
+    const r=Math.round(lerp(c1.r,c2.r,t)),g=Math.round(lerp(c1.g,c2.g,t)),bb=Math.round(lerp(c1.b,c2.b,t));
+    return `rgba(${r},${g},${bb},${alpha})`;
+  };
+  const lerpHex=(a,b,t)=>{
+    const c1=hexToRgb(a),c2=hexToRgb(b);
+    const n=(r,g,bb)=>'#'+[r,g,bb].map(v=>Math.round(v).toString(16).padStart(2,'0')).join('');
+    return n(lerp(c1.r,c2.r,t),lerp(c1.g,c2.g,t),lerp(c1.b,c2.b,t));
+  };
+  const noise=(i,s=0)=>{const v=Math.sin(i*127.1+s*311.7)*43758.5453;return v-Math.floor(v)};
+  const moveZScale=v=>Math.pow(25,Math.max(-100,Math.min(100,Number(v)||0))/100);
+
+  function makeShape(shape){
+    const arr=[];
+    for(let i=0;i<N;i++){
+      const y=1-(i/(N-1))*2;
+      const rs=Math.sqrt(Math.max(0,1-y*y));
+      const th=golden*i;
+      const dx=Math.cos(th)*rs,dy=y,dz=Math.sin(th)*rs;
+      let k=1;
+      if(shape==='cube') k=1/Math.max(Math.abs(dx),Math.abs(dy),Math.abs(dz));
+      const x=dx*k, yy=dy*k, z=dz*k;
+      const r=Math.sqrt(x*x+yy*yy+z*z)||1;
+      arr.push({x,y:yy,z,theta:Math.atan2(z,x),phi:Math.acos(clamp(yy/r,-1,1))});
+    }
+    return arr;
+  }
+  const shapes={sphere:makeShape('sphere'),cube:makeShape('cube')};
+
+  // Exact state values from stanby 02(1).html.
+  const standby=[
+    {d:1/3,shape:'sphere',c1:'#00ff91',c2:'#096672',moveZ:-27.59,speed:.03,morph:.25,rotX:-.3,rotY:.3,size:2},
+    {d:1/3,shape:'sphere',c1:'#2b00ff',c2:'#52cddd',moveZ:-33.79,speed:.037,morph:.33,rotX:-.3,rotY:.3,size:2},
+    {d:1/3,shape:'sphere',c1:'#00ff91',c2:'#096672',moveZ:-27.59,speed:.03,morph:.25,rotX:-.3,rotY:.3,size:2}
+  ];
+
+  // Exact form / depth / morph values from think .3.html.
+  const thinking=[
+    {d:.25,shape:'cube',  c1:'#00ff91',c2:'#096672',moveZ:-27.59,speed:.03,morph:.05,rotX:-.3,rotY:.3,size:2},
+    {d:.25,shape:'sphere',c1:'#00ff91',c2:'#096672',moveZ:-27.59,speed:.03,morph:.11,rotX:-.3,rotY:.3,size:2},
+    {d:.25,shape:'cube',  c1:'#00ff91',c2:'#096672',moveZ:-42.76,speed:.03,morph:.26,rotX:-.3,rotY:.3,size:2},
+    {d:.25,shape:'sphere',c1:'#00ff91',c2:'#096672',moveZ:-24.14,speed:.03,morph:.26,rotX:-.3,rotY:.3,size:2}
+  ];
+
+  function sampleStates(states,total,t){
+    let local=((t%total)+total)%total;
+    let acc=0;
+    for(let i=0;i<states.length;i++){
+      const seg=states[i].d*total;
+      if(local<=acc+seg || i===states.length-1){
+        const a=states[i],b=states[(i+1)%states.length],p=ease((local-acc)/seg);
+        return {a,b,p};
+      }
+      acc+=seg;
+    }
+    return {a:states[0],b:states[1],p:0};
+  }
+
+  function blendState(pair){
+    const {a,b,p}=pair;
+    return {
+      fromShape:a.shape,toShape:b.shape,shapeMix:p,
+      c1:lerpHex(a.c1,b.c1,p),c2:lerpHex(a.c2,b.c2,p),
+      moveZ:lerp(a.moveZ,b.moveZ,p),speed:lerp(a.speed,b.speed,p),morph:lerp(a.morph,b.morph,p),
+      rotX:lerp(a.rotX,b.rotX,p),rotY:lerp(a.rotY,b.rotY,p),size:lerp(a.size,b.size,p)
+    };
+  }
+
+  function samplePoint(state,i){
+    const a=shapes[state.fromShape][i],b=shapes[state.toShape][i],p=state.shapeMix;
+    return {x:lerp(a.x,b.x,p),y:lerp(a.y,b.y,p),z:lerp(a.z,b.z,p),theta:lerp(a.theta,b.theta,p),phi:lerp(a.phi,b.phi,p)};
+  }
+
+  function renderParticles(globalT){
+    const t=Math.max(0,globalT);
+    // Standby follows its 5 s loop. Thinking follows its 3 s loop and begins as the prompt is submitted.
+    const stand=blendState(sampleStates(standby,5,t));
+    const thinkT=Math.max(0,t-TL.send);
+    const think=blendState(sampleStates(thinking,3,thinkT));
+    const mode=ease(clamp((t-(TL.send-.15))/2.1));
+
+    // Keep the richer cyan/violet chromatic breathing seen in the reference video
+    // while using the supplied thinking file for the geometry and depth motion.
+    const colorCycle=blendState(sampleStates(standby,5,t+.55));
+    think.c1=colorCycle.c1; think.c2=colorCycle.c2;
+
+    const anchorX=985;
+    const lift=ease(clamp((t-(TL.send-.2))/2.25));
+
+    // Match the reference video more closely: the morph grows as it moves into
+    // the upper thinking position, then settles slightly instead of staying
+    // permanently enlarged. Keeping the final center a little lower also gives
+    // the expanded particles enough breathing room at the top edge.
+    const anchorY=lerp(168,94,lift);
+    const grow=ease(clamp((t-(TL.send+.05))/1.45));
+    const settle=ease(clamp((t-(TL.chatShow+1.8))/2.7));
+    const sizeBreath=mode*Math.sin((t-TL.send)*2.05)*.018;
+    const visualScale=.64 + .14*grow - .055*settle + sizeBreath;
+    const GLOBAL_MORPH_SCALE=.7225;
+    const desiredBaseSphere=Math.min(W,H)*.25*visualScale*GLOBAL_MORPH_SCALE;
+
+    ctx.clearRect(0,0,W,H);
+
+    // Derive the exported animation's frame-based phase from timeline time.
+    const speed=lerp(stand.speed,think.speed,mode);
+    const phase=t*60*speed;
+    const state={
+      moveZ:lerp(stand.moveZ,think.moveZ,mode),
+      morph:lerp(stand.morph,think.morph,mode),
+      rotX:lerp(stand.rotX,think.rotX,mode),
+      rotY:lerp(stand.rotY,think.rotY,mode),
+      size:lerp(stand.size,think.size,mode),
+      c1:lerpHex(stand.c1,think.c1,mode),c2:lerpHex(stand.c2,think.c2,mode)
+    };
+    const rz=moveZScale(state.moveZ);
+    const rx=phase*state.rotX, ry=phase*state.rotY;
+    const crx=Math.cos(rx),srx=Math.sin(rx),cry=Math.cos(ry),sry=Math.sin(ry);
+
+    // Short, controlled opening-up motion at submission, matching the video's transition into thinking.
+    const burstCenter=TL.chatShow+.15;
+    const burst=Math.exp(-Math.pow((t-burstCenter)/1.15,2))*mode;
+
+    const out=[];
+    let minProjectedY=Infinity;
+    for(let i=0;i<N;i++){
+      const ps=samplePoint(stand,i), pt=samplePoint(think,i);
+      const p={
+        x:lerp(ps.x,pt.x,mode),y:lerp(ps.y,pt.y,mode),z:lerp(ps.z,pt.z,mode),
+        theta:lerp(ps.theta,pt.theta,mode),phi:lerp(ps.phi,pt.phi,mode)
+      };
+      const deformation=Math.sin(p.theta*4+phase*2)*Math.cos(p.phi*3-phase)*state.morph;
+      const radius=1+deformation;
+      let x=p.x*radius,y=p.y*radius,z=p.z*radius;
+
+      if(burst>.015){
+        const nx=noise(i,2)*2-1,ny=noise(i,3)*2-1,nz=noise(i,4)*2-1;
+        const amp=burst*(.09+.16*noise(i,5));
+        x+=nx*amp; y+=ny*amp; z+=nz*amp;
+      }
+
+      let y1=y*crx-z*srx,z1=y*srx+z*crx;y=y1;z=z1;
+      let x1=x*cry-z*sry,z2=x*sry+z*cry;x=x1;z=z2;
+      const persp=(3/(3+z))*rz;
+      const projectedX=x*persp;
+      const projectedY=y*persp;
+      minProjectedY=Math.min(minProjectedY,projectedY);
+      const gradient=clamp((-p.y+1)/2);
+      out.push({projectedX,projectedY,z,persp,gradient});
+    }
+
+    // Edge-aware scale guard. It only intervenes when the current deformation
+    // would touch the top of the 1910x932 stage, so normal size breathing stays
+    // intact while the expanded state never gets visibly clipped.
+    const topMargin=18;
+    const safeBaseSphere=minProjectedY<-.0001
+      ? Math.max(1,(anchorY-topMargin)/(-minProjectedY))
+      : desiredBaseSphere;
+    const baseSphere=Math.min(desiredBaseSphere,safeBaseSphere);
+
+    for(const p of out){
+      p.px=anchorX+p.projectedX*baseSphere;
+      p.py=anchorY+p.projectedY*baseSphere;
+    }
+    out.sort((a,b)=>b.z-a.z);
+    for(const p of out){
+      const size=Math.max(.47,p.persp*state.size*.93*GLOBAL_MORPH_SCALE);
+      const alpha=clamp(.62+p.persp*.34,.38,.98);
+      ctx.fillStyle=rgbToCss(state.c1,state.c2,p.gradient,alpha);
+      ctx.beginPath();ctx.arc(p.px,p.py,size,0,Math.PI*2);ctx.fill();
+    }
+  }
+  window.__renderParticles=renderParticles;
+})();
+(() => {
+  const params=new URLSearchParams(location.search);
+  const debug=params.get('t');
+  const speed=Math.max(.1,Number(params.get('speed')||1));
+  const loop=params.get('loop')!=='0';
+  const cycle=18.0;
+  const start=performance.now();
+  function frame(now){
+    let t=debug!==null?Number(debug):((now-start)/1000)*speed;
+    if(loop && debug===null)t%=cycle;
+    renderTimeline(t);
+    window.__renderParticles(t);
+    if(debug===null)requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

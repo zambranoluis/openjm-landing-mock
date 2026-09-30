@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morphing Shape - Animación Exportada</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000000; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <canvas id="sphereCanvas"></canvas>
+    
+    <script>
+        const canvas = document.getElementById('sphereCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let params = { 
+            shape: 'sphere', color1: '#0db4b1', color2: '#1e8491', backgroundColor: '#000000', solidMesh: false, figureOpacity: 1, points: 1500, size: 2, sphereRadius: 0.25, trail: 1, 
+            moveX: -0.21000000000000002, moveY: -1.1, moveZ: -29.402068498413854,
+            speed: 0.032045883788531765, morph: 0.2733815290117917, rotX: -0.3, rotY: 0.3,
+            pulseForce: 3, pulseDecay: 0.9200000000000002, sizeImpact: 2, speedImpact: 0.05
+        };
+        document.body.style.backgroundColor = params.backgroundColor;
+        
+        let width, height, pointsArray = [], time = 0, pulseIntensity = 0;
+        
+        let state1 = {"shape":"sphere","color1":"#00ff91","color2":"#096672","backgroundColor":"#000000","solidMesh":false,"figureOpacity":1,"points":1500,"size":2,"sphereRadius":0.25,"trail":1,"moveX":-0.21,"moveY":-1.1,"moveZ":-27.59,"speed":0.03,"morph":0.25,"rotX":-0.3,"rotY":0.3,"pulseForce":3,"pulseDecay":0.92,"sizeImpact":2,"speedImpact":0.05};
+        let state2 = {"shape":"sphere","color1":"#2b00ff","color2":"#52cddd","backgroundColor":"#000000","solidMesh":false,"figureOpacity":1,"points":1500,"size":2,"sphereRadius":0.25,"trail":1,"moveX":-0.21,"moveY":-1.1,"moveZ":-33.79,"speed":0.037,"morph":0.33,"rotX":-0.3,"rotY":0.3,"pulseForce":3,"pulseDecay":0.92,"sizeImpact":2,"speedImpact":0.05};
+        let transitionStates = [{"id":1,"name":"Estado 1","duration":0.3333333333333333,"transitionEase":"smooth","transitionEffect":"direct","transitionCloudSpread":2.2,"transitionCloudChaos":0.8,"transitionCloudPointSize":0.75,"transitionCloudPointAmount":1,"transitionCloudObjectScale":1,"transitionCloudShape":"sphere","transitionCloudVortexStrength":0.6,"transitionCloudVortexSpeed":1.2,"transitionHelixDirection":"forward","transitionHelixAngle":0,"transitionHelixAxisX":0,"transitionHelixAxisY":1,"transitionHelixAxisZ":0,"transitionHelixAutoOrbit":false,"transitionHelixTunnel":0,"transitionHelixThickness":1,"transitionHelixLoops":4.3,"transitionHelixCloud":false,"transitionHelixCloudIntensity":0.8,"transitionHelixDrawDirection":"forward","loopTransitionManual":false,"data":{"shape":"sphere","color1":"#00ff91","color2":"#096672","backgroundColor":"#000000","solidMesh":false,"figureOpacity":1,"points":1500,"size":2,"sphereRadius":0.25,"trail":1,"moveX":-0.21,"moveY":-1.1,"moveZ":-27.59,"speed":0.03,"morph":0.25,"rotX":-0.3,"rotY":0.3,"pulseForce":3,"pulseDecay":0.92,"sizeImpact":2,"speedImpact":0.05}},{"id":3,"name":"Estado 3","duration":0.33333333333333337,"transitionEase":"smooth","transitionEffect":"direct","transitionCloudSpread":2.2,"transitionCloudChaos":0.8,"transitionCloudPointSize":0.75,"transitionCloudPointAmount":1,"transitionCloudObjectScale":1,"transitionCloudShape":"sphere","transitionCloudVortexStrength":0.6,"transitionCloudVortexSpeed":1.2,"transitionHelixDirection":"forward","transitionHelixAngle":0,"transitionHelixAxisX":0,"transitionHelixAxisY":1,"transitionHelixAxisZ":0,"transitionHelixAutoOrbit":false,"transitionHelixTunnel":0,"transitionHelixThickness":1,"transitionHelixLoops":4.3,"transitionHelixCloud":false,"transitionHelixCloudIntensity":0.8,"transitionHelixDrawDirection":"forward","loopTransitionManual":false,"data":{"shape":"sphere","color1":"#2b00ff","color2":"#52cddd","backgroundColor":"#000000","solidMesh":false,"figureOpacity":1,"points":1500,"size":2,"sphereRadius":0.25,"trail":1,"moveX":-0.21,"moveY":-1.1,"moveZ":-33.79,"speed":0.037,"morph":0.33,"rotX":-0.3,"rotY":0.3,"pulseForce":3,"pulseDecay":0.92,"sizeImpact":2,"speedImpact":0.05}},{"id":4,"name":"Estado 4","duration":0.3333333333333333,"transitionEase":"smooth","transitionEffect":"direct","transitionCloudSpread":2.2,"transitionCloudChaos":0.8,"transitionCloudPointSize":0.75,"transitionCloudPointAmount":1,"transitionCloudObjectScale":1,"transitionCloudShape":"sphere","transitionCloudVortexStrength":0.6,"transitionCloudVortexSpeed":1.2,"transitionHelixDirection":"forward","transitionHelixAngle":0,"transitionHelixAxisX":0,"transitionHelixAxisY":1,"transitionHelixAxisZ":0,"transitionHelixAutoOrbit":false,"transitionHelixTunnel":0,"transitionHelixThickness":1,"transitionHelixLoops":4.3,"transitionHelixCloud":false,"transitionHelixCloudIntensity":0.8,"transitionHelixDrawDirection":"forward","loopTransitionManual":false,"data":{"shape":"sphere","color1":"#00ff91","color2":"#096672","backgroundColor":"#000000","solidMesh":false,"figureOpacity":1,"points":1500,"size":2,"sphereRadius":0.25,"trail":1,"moveX":-0.21,"moveY":-1.1,"moveZ":-27.59,"speed":0.03,"morph":0.25,"rotX":-0.3,"rotY":0.3,"pulseForce":3,"pulseDecay":0.92,"sizeImpact":2,"speedImpact":0.05}}];
+        let transitionEnabled = true;
+        let transitionLoopEnabled = true;
+        let isPulseGlobalEnabled = true;
+        let transitionDuration = 5;
+        let transitionTimeCounter = 0;
+        let transitionArrayCache = new Map();
+
+        function lerp(start, end, amt) { return (1 - amt) * start + amt * end; }
+        function lerpColor(c1, c2, amt) {
+            let rgb1 = hexToRgb(c1), rgb2 = hexToRgb(c2);
+            let r = Math.round(lerp(rgb1.r, rgb2.r, amt)), g = Math.round(lerp(rgb1.g, rgb2.g, amt)), b = Math.round(lerp(rgb1.b, rgb2.b, amt));
+            return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
+        }
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value));
+        }
+        function applyTransitionEasing(raw, easing) {
+            const t = clamp(raw, 0, 1);
+            if (easing === 'linear') return t;
+            if (easing === 'ease-in') return t * t;
+            if (easing === 'ease-out') return 1 - Math.pow(1 - t, 2);
+            return 0.5 - 0.5 * Math.cos(t * Math.PI);
+        }
+
+        function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+        window.addEventListener('resize', resize); resize();
+
+        function hexToRgb(hex) {
+            let r = parseInt(hex.substring(1, 3), 16), g = parseInt(hex.substring(3, 5), 16), b = parseInt(hex.substring(5, 7), 16);
+            return {r, g, b};
+        }
+        function interpolateColor(color1, color2, factor) {
+            return Math.round(color1.r + factor * (color2.r - color1.r)) + ", " + Math.round(color1.g + factor * (color2.g - color1.g)) + ", " + Math.round(color1.b + factor * (color2.b - color1.b));
+        }
+
+        function getMoveZScale(value) {
+            const safeValue = Math.max(-100, Math.min(100, Number(value) || 0));
+            return Math.pow(25, safeValue / 100);
+        }
+
+        function generateShapeArray(shape, n) {
+            let arr = [];
+            const phi = Math.PI * (3 - Math.sqrt(5));
+            for (let i = 0; i < n; i++) {
+                const y = 1 - (i / (n - 1)) * 2;
+                const rSphere = Math.sqrt(1 - y * y);
+                const thetaRaw = phi * i;
+
+                const dx = Math.cos(thetaRaw) * rSphere;
+                const dy = y;
+                const dz = Math.sin(thetaRaw) * rSphere;
+
+                let t = 1;
+
+                if (shape === 'cube') {
+                    t = 1 / Math.max(Math.abs(dx), Math.abs(dy), Math.abs(dz));
+                } else if (shape === 'pyramid') {
+                    t = Infinity;
+                    if (dy < 0) t = -1 / dy;
+                    let denomX = dy + 2 * Math.abs(dx);
+                    if (denomX > 0) t = Math.min(t, 1 / denomX);
+                    let denomZ = dy + 2 * Math.abs(dz);
+                    if (denomZ > 0) t = Math.min(t, 1 / denomZ);
+                }
+
+                let x = dx * t;
+                let finalY = dy * t;
+                let z = dz * t;
+
+                let r3d = Math.sqrt(x*x + finalY*finalY + z*z) || 1;
+                let theta = Math.atan2(z, x);
+                let phiZ = Math.acos(finalY / r3d);
+
+                arr.push({ origX: x, origY: finalY, origZ: z, theta: theta, phiZ: phiZ });
+            }
+            return arr;
+        }
+
+        function initShape() { pointsArray = generateShapeArray(params.shape, Math.floor(params.points)); }
+        
+        function createSolidMesh(shape) {
+            const vertices = [];
+            const faces = [];
+            const rings = shape === 'sphere' ? 36 : 28;
+            const segments = shape === 'sphere' ? 72 : 56;
+
+            function projectToShape(dx, dy, dz) {
+                let t = 1;
+                if (shape === 'cube') {
+                    t = 1 / Math.max(Math.abs(dx), Math.abs(dy), Math.abs(dz));
+                } else if (shape === 'pyramid') {
+                    t = Infinity;
+                    if (dy < 0) t = -1 / dy;
+                    const denomX = dy + 2 * Math.abs(dx);
+                    if (denomX > 0) t = Math.min(t, 1 / denomX);
+                    const denomZ = dy + 2 * Math.abs(dz);
+                    if (denomZ > 0) t = Math.min(t, 1 / denomZ);
+                    if (!isFinite(t)) t = 1;
+                }
+                return { x: dx * t, y: dy * t, z: dz * t };
+            }
+
+            for (let lat = 0; lat <= rings; lat++) {
+                const phi = Math.PI * lat / rings;
+                const dy = Math.cos(phi);
+                const radius = Math.sin(phi);
+                for (let lon = 0; lon < segments; lon++) {
+                    const theta = Math.PI * 2 * lon / segments;
+                    const dx = Math.cos(theta) * radius;
+                    const dz = Math.sin(theta) * radius;
+                    vertices.push(projectToShape(dx, dy, dz));
+                }
+            }
+            for (let lat = 0; lat < rings; lat++) {
+                for (let lon = 0; lon < segments; lon++) {
+                    const nextLon = (lon + 1) % segments;
+                    faces.push([
+                        lat * segments + lon,
+                        lat * segments + nextLon,
+                        (lat + 1) * segments + nextLon,
+                        (lat + 1) * segments + lon
+                    ]);
+                }
+            }
+            return { vertices, faces };
+        }
+
+        function mixRgb(color1, color2, factor) {
+            return {
+                r: Math.round(color1.r + factor * (color2.r - color1.r)),
+                g: Math.round(color1.g + factor * (color2.g - color1.g)),
+                b: Math.round(color1.b + factor * (color2.b - color1.b))
+            };
+        }
+
+        function shadeRgb(color, shade) {
+            return {
+                r: Math.max(0, Math.min(255, Math.round(color.r * shade))),
+                g: Math.max(0, Math.min(255, Math.round(color.g * shade))),
+                b: Math.max(0, Math.min(255, Math.round(color.b * shade)))
+            };
+        }
+
+        function seededNoise(index, salt) {
+            const value = Math.sin(index * 127.1 + salt * 311.7) * 43758.5453;
+            return value - Math.floor(value);
+        }
+
+        function getParticleCloudAmount(t) {
+            return 1 - Math.abs(Math.max(0, Math.min(1, t)) * 2 - 1);
+        }
+
+        function getTransitionEffectForState(state) {
+            return state?.transitionEffect || 'direct';
+        }
+
+        function getTransitionCloudSettingsForState(state) {
+            return {
+                spread: Math.max(0.8, Math.min(4, Number(state?.transitionCloudSpread) || 2.2)),
+                chaos: Math.max(0, Math.min(2, Number(state?.transitionCloudChaos) || 0.8)),
+                pointSize: Math.max(0.25, Math.min(3, Number(state?.transitionCloudPointSize) || 0.75)),
+                pointAmount: Math.max(0.25, Math.min(2, Number(state?.transitionCloudPointAmount) || 1)),
+                objectScale: Math.max(0.4, Math.min(3, Number(state?.transitionCloudObjectScale) || 1)),
+                shape: state?.transitionCloudShape || 'sphere',
+                vortexStrength: Math.max(0, Math.min(3, Number(state?.transitionCloudVortexStrength) || 0.6)),
+                vortexSpeed: Math.max(0, Math.min(4, Number(state?.transitionCloudVortexSpeed) || 1.2))
+            };
+        }
+
+        function getTransitionHelixSettingsForState(state) {
+            return {
+                direction: state?.transitionHelixDirection === 'reverse' ? 'reverse' : 'forward',
+                angle: Math.max(0, Math.min(360, Number(state?.transitionHelixAngle) || 0)),
+                axisX: Math.max(-1, Math.min(1, Number(state?.transitionHelixAxisX) || 0)),
+                axisY: Math.max(-1, Math.min(1, Number(state?.transitionHelixAxisY ?? 1))),
+                axisZ: Math.max(-1, Math.min(1, Number(state?.transitionHelixAxisZ) || 0)),
+                autoOrbit: state?.transitionHelixAutoOrbit === true,
+                tunnel: Math.max(0, Math.min(2, Number(state?.transitionHelixTunnel) || 0)),
+                thickness: Math.max(0.2, Math.min(25, Number(state?.transitionHelixThickness) || 1)),
+                loops: Math.max(1, Math.min(12, Number(state?.transitionHelixLoops) || 4.3)),
+                drawDirection: state?.transitionHelixDrawDirection === 'reverse' ? 'reverse' : 'forward'
+            };
+        }
+
+        function buildHelixBasis(axisX, axisY, axisZ, angleDeg) {
+            let ax = axisX;
+            let ay = axisY;
+            let az = axisZ * 2.5;
+            let axisLength = Math.sqrt(ax * ax + ay * ay + az * az);
+            if (!Number.isFinite(axisLength) || axisLength < 0.0001) {
+                ax = 0;
+                ay = 1;
+                az = 0;
+                axisLength = 1;
+            }
+            ax /= axisLength;
+            ay /= axisLength;
+            az /= axisLength;
+
+            let helperX = Math.abs(ay) < 0.9 ? 0 : 1;
+            let helperY = Math.abs(ay) < 0.9 ? 1 : 0;
+            let helperZ = 0;
+            let ux = helperY * az - helperZ * ay;
+            let uy = helperZ * ax - helperX * az;
+            let uz = helperX * ay - helperY * ax;
+            let uLength = Math.sqrt(ux * ux + uy * uy + uz * uz);
+            if (!Number.isFinite(uLength) || uLength < 0.0001) {
+                helperX = 0;
+                helperY = 0;
+                helperZ = 1;
+                ux = helperY * az - helperZ * ay;
+                uy = helperZ * ax - helperX * az;
+                uz = helperX * ay - helperY * ax;
+                uLength = Math.sqrt(ux * ux + uy * uy + uz * uz) || 1;
+            }
+            ux /= uLength;
+            uy /= uLength;
+            uz /= uLength;
+
+            const vx = ay * uz - az * uy;
+            const vy = az * ux - ax * uz;
+            const vz = ax * uy - ay * ux;
+            const angle = (Number(angleDeg) || 0) * Math.PI / 180;
+            const cosA = Math.cos(angle);
+            const sinA = Math.sin(angle);
+
+            return {
+                axis: { x: ax, y: ay, z: az },
+                u: {
+                    x: ux * cosA + vx * sinA,
+                    y: uy * cosA + vy * sinA,
+                    z: uz * cosA + vz * sinA
+                },
+                v: {
+                    x: -ux * sinA + vx * cosA,
+                    y: -uy * sinA + vy * cosA,
+                    z: -uz * sinA + vz * cosA
+                }
+            };
+        }
+
+        function getHelixCloudPoint(index, settings, helixSettings, timeValue, isDoubleHelix, traversalProgress) {
+            const baseScale = settings.spread * settings.objectScale;
+            const basis = buildHelixBasis(helixSettings.axisX, helixSettings.axisY, helixSettings.axisZ, helixSettings.angle);
+            const directionSign = helixSettings.direction === 'reverse' ? -1 : 1;
+            const drawDirectionSign = helixSettings.drawDirection === 'reverse' ? -1 : 1;
+            const tunnelAmount = Math.max(0, Math.min(2, Number(helixSettings.tunnel) || 0));
+            const screwSpinSpeed = 0.4 + settings.vortexSpeed * 0.35;
+            const loopCount = Math.max(1, Math.min(12, Number(helixSettings.loops) || 4.3));
+            const rungCount = Math.max(10, Math.round(loopCount * 3.4));
+            const roleNoise = seededNoise(index, 17);
+            const isBridgeAtom = isDoubleHelix && roleNoise < 0.34;
+            const cloudEnabled = helixSettings.cloud === true;
+            const cloudIntensity = Math.max(0, Math.min(2, Number(helixSettings.cloudIntensity) || 0.8));
+            const cloudMix = clamp(cloudIntensity / 2, 0, 1);
+            const cloudDrive = Math.pow(cloudMix, 1.15);
+            const hasTraversalProgress = Number.isFinite(traversalProgress);
+            const rawHeightProgress = hasTraversalProgress ? Math.max(0, Math.min(1, traversalProgress)) : seededNoise(index, 18);
+            const heightProgress = isBridgeAtom && !hasTraversalProgress
+                ? (Math.floor(rawHeightProgress * rungCount) + 0.5) / rungCount
+                : rawHeightProgress;
+            const drawHeightProgress = drawDirectionSign === -1 ? 1 - heightProgress : heightProgress;
+            const axialOffset = (drawHeightProgress * 2 - 1) * baseScale * 1.45;
+            const strandFlipped = isDoubleHelix && !isBridgeAtom && seededNoise(index, 19) < 0.5;
+            const strandPhase = strandFlipped ? Math.PI : 0;
+            const strandProgress = strandFlipped ? 1 - drawHeightProgress : drawHeightProgress;
+            const helixPhase = directionSign * (strandProgress * Math.PI * 2 * loopCount + timeValue * screwSpinSpeed) + strandPhase;
+            const helixRadius = baseScale * (isDoubleHelix ? 0.34 : 0.4) * (1 + tunnelAmount * 0.42);
+            const radialX = Math.cos(helixPhase) * basis.u.x + Math.sin(helixPhase) * basis.v.x;
+            const radialY = Math.cos(helixPhase) * basis.u.y + Math.sin(helixPhase) * basis.v.y;
+            const radialZ = Math.cos(helixPhase) * basis.u.z + Math.sin(helixPhase) * basis.v.z;
+            const tangentX = -Math.sin(helixPhase) * basis.u.x + Math.cos(helixPhase) * basis.v.x;
+            const tangentY = -Math.sin(helixPhase) * basis.u.y + Math.cos(helixPhase) * basis.v.y;
+            const tangentZ = -Math.sin(helixPhase) * basis.u.z + Math.cos(helixPhase) * basis.v.z;
+            const cloudOrbitPhase = helixPhase * (0.82 + cloudDrive * 0.12) + timeValue * (0.75 + cloudDrive * 0.55) + (seededNoise(index, 24) - 0.5) * Math.PI * 2.25;
+            const cloudOrbitRadius = helixRadius * (0.34 + cloudDrive * 0.62) * (0.9 + 0.18 * Math.sin(drawHeightProgress * Math.PI * 2.6 + seededNoise(index, 25) * Math.PI * 2));
+            const cloudOrbitX = Math.cos(cloudOrbitPhase) * basis.u.x + Math.sin(cloudOrbitPhase) * basis.v.x;
+            const cloudOrbitY = Math.cos(cloudOrbitPhase) * basis.u.y + Math.sin(cloudOrbitPhase) * basis.v.y;
+            const cloudOrbitZ = Math.cos(cloudOrbitPhase) * basis.u.z + Math.sin(cloudOrbitPhase) * basis.v.z;
+            const cloudAxisDrift = cloudEnabled ? Math.sin(cloudOrbitPhase * 0.7 + seededNoise(index, 26) * Math.PI * 2) * baseScale * (0.12 + cloudDrive * 0.13) : 0;
+            const cloudRadialSpread = cloudEnabled ? (seededNoise(index, 27) * 2 - 1) * baseScale * (0.09 + cloudDrive * 0.11) : 0;
+            const cloudTangentSpread = cloudEnabled ? (seededNoise(index, 28) * 2 - 1) * baseScale * (0.08 + cloudDrive * 0.1) : 0;
+            const cloudLift = cloudEnabled ? Math.sin(drawHeightProgress * Math.PI * 3.4 + timeValue * (0.5 + cloudDrive * 0.4) + seededNoise(index, 29) * Math.PI * 2) * baseScale * (0.1 + cloudDrive * 0.11) : 0;
+            const cloudCoreRadius = cloudEnabled ? helixRadius * (0.92 + cloudDrive * 0.22) : helixRadius;
+
+            // Bridge atoms line up at shared heights to read as DNA rungs.
+            const bridgeSide = isBridgeAtom ? (seededNoise(index, 20) < 0.5 ? -1 : 1) : 1;
+            const radialScale = isBridgeAtom ? bridgeSide * (0.22 + seededNoise(index, 31) * 0.08) : 1;
+            const thickness = baseScale * (isBridgeAtom ? 0.01 : 0.018) * (1 + settings.chaos * 0.65) * Math.max(0.2, Math.min(25, Number(helixSettings.thickness) || 1));
+            const radialJitter = (seededNoise(index, 21) * 2 - 1) * thickness;
+            const tangentJitter = (seededNoise(index, 22) * 2 - 1) * thickness;
+            const axialJitter = (seededNoise(index, 23) * 2 - 1) * thickness * 0.45;
+            const bridgeTightness = isBridgeAtom ? 0.45 : 1;
+            const cloudRadialJitter = cloudEnabled ? (seededNoise(index, 30) * 2 - 1) * baseScale * (0.1 + cloudDrive * 0.12) * bridgeTightness : 0;
+            const activeRadius = cloudEnabled ? cloudCoreRadius : helixRadius;
+            const cloudRadius = activeRadius * radialScale + radialJitter + cloudRadialJitter + cloudRadialSpread + cloudOrbitRadius * (cloudEnabled ? (0.58 + cloudDrive * 0.28) : 0);
+            let x = basis.axis.x * (axialOffset + cloudAxisDrift * bridgeTightness + cloudLift * 0.35) + radialX * cloudRadius + cloudOrbitX * cloudOrbitRadius + tangentX * (tangentJitter + cloudTangentSpread * bridgeTightness);
+            let y = basis.axis.y * (axialOffset + cloudAxisDrift * bridgeTightness + cloudLift * 0.35) + radialY * cloudRadius + cloudOrbitY * cloudOrbitRadius + tangentY * (tangentJitter + cloudTangentSpread * bridgeTightness);
+            let z = basis.axis.z * (axialOffset + cloudAxisDrift * bridgeTightness + cloudLift * 0.35) + radialZ * cloudRadius + cloudOrbitZ * cloudOrbitRadius + tangentZ * (tangentJitter + cloudTangentSpread * bridgeTightness);
+
+            x += basis.axis.x * axialJitter;
+            y += basis.axis.y * axialJitter;
+            z += basis.axis.z * axialJitter;
+
+            const r3d = Math.sqrt(x * x + y * y + z * z) || 1;
+            return {
+                origX: x,
+                origY: y,
+                origZ: z,
+                theta: Math.atan2(z, x),
+                phiZ: Math.acos(Math.max(-1, Math.min(1, y / r3d)))
+            };
+        }
+
+        function easeParticleTraversal(amount) {
+            const t = Math.max(0, Math.min(1, amount));
+            return t * t * (3 - 2 * t);
+        }
+
+        function getParticleCloudPoint(index, settings, timeValue) {
+            const dirX = seededNoise(index, 1) * 2 - 1;
+            const dirY = seededNoise(index, 2) * 2 - 1;
+            const dirZ = seededNoise(index, 3) * 2 - 1;
+            const length = Math.max(0.001, Math.sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ));
+            const baseScale = settings.spread * settings.objectScale;
+            const radius = (0.35 + Math.cbrt(seededNoise(index, 4)) * 0.65) * baseScale;
+            const speed = 0.8 + seededNoise(index, 5) * 1.8;
+            const phase = timeValue * speed + seededNoise(index, 6) * Math.PI * 2;
+            const wobble = settings.chaos * 0.18;
+            let x = (dirX / length) * radius;
+            let y = (dirY / length) * radius;
+            let z = (dirZ / length) * radius;
+
+            if (settings.shape === 'cube') {
+                x = (seededNoise(index, 1) * 2 - 1) * baseScale;
+                y = (seededNoise(index, 2) * 2 - 1) * baseScale;
+                z = (seededNoise(index, 3) * 2 - 1) * baseScale;
+            } else if (settings.shape === 'pyramid') {
+                const heightLevel = seededNoise(index, 2);
+                const layerSize = 1 - heightLevel * 0.86;
+                x = (seededNoise(index, 1) * 2 - 1) * baseScale * layerSize;
+                y = (heightLevel * 2 - 1) * baseScale;
+                z = (seededNoise(index, 3) * 2 - 1) * baseScale * layerSize;
+            } else if (settings.shape === 'ring') {
+                const angle = seededNoise(index, 1) * Math.PI * 2;
+                const ringRadius = baseScale * (0.65 + seededNoise(index, 4) * 0.35);
+                x = Math.cos(angle) * ringRadius;
+                y = (seededNoise(index, 2) * 2 - 1) * baseScale * 0.22;
+                z = Math.sin(angle) * ringRadius;
+            }
+
+            if (settings.vortexStrength > 0) {
+                const radial = Math.sqrt(x * x + z * z);
+                const vortexPhase = timeValue * settings.vortexSpeed + seededNoise(index, 9) * Math.PI * 2 + y * 0.9;
+                const vortexAngle = Math.atan2(z, x) + vortexPhase * settings.vortexStrength;
+                x = Math.cos(vortexAngle) * radial;
+                z = Math.sin(vortexAngle) * radial;
+                y += Math.sin(vortexPhase) * baseScale * settings.vortexStrength * 0.08;
+            }
+
+            return {
+                origX: x + Math.sin(phase) * wobble,
+                origY: y + Math.cos(phase * 0.9) * wobble,
+                origZ: z + Math.sin(phase * 1.15) * wobble,
+                theta: seededNoise(index, 7) * Math.PI * 2 + Math.sin(phase) * settings.chaos,
+                phiZ: seededNoise(index, 8) * Math.PI * 2 + Math.cos(phase) * settings.chaos
+            };
+        }
+
+        function blendParticlePoint(fromPoint, toPoint, amount) {
+            return {
+                origX: lerp(fromPoint.origX, toPoint.origX, amount),
+                origY: lerp(fromPoint.origY, toPoint.origY, amount),
+                origZ: lerp(fromPoint.origZ, toPoint.origZ, amount),
+                theta: lerp(fromPoint.theta, toPoint.theta, amount),
+                phiZ: lerp(fromPoint.phiZ, toPoint.phiZ, amount)
+            };
+        }
+
+        function renderSolidShape(shape, rotX, rotY, sphereSize, rgb1, rgb2) {
+            const mesh = createSolidMesh(shape);
+            const screenOffsetX = (params.moveX || 0) * sphereSize;
+            const screenOffsetY = (params.moveY || 0) * sphereSize;
+            const moveZScale = getMoveZScale(params.moveZ);
+            const transformed = mesh.vertices.map(v => {
+                const r3d = Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z) || 1;
+                const theta = Math.atan2(v.z, v.x);
+                const phiZ = Math.acos(v.y / r3d);
+                const morph = Math.sin(theta * 4 + time * 2) * Math.cos(phiZ * 3 - time) * params.morph;
+                const radius = 1 + morph;
+                let x = v.x * radius;
+                let y = v.y * radius;
+                let z = v.z * radius;
+                let y1 = y * Math.cos(rotX) - z * Math.sin(rotX);
+                let z1 = y * Math.sin(rotX) + z * Math.cos(rotX);
+                y = y1;
+                z = z1;
+                let x1 = x * Math.cos(rotY) - z * Math.sin(rotY);
+                let z2 = x * Math.sin(rotY) + z * Math.cos(rotY);
+                x = x1;
+                z = z2;
+                const scale = 3 / (3 + z);
+                return {
+                    x, y, z, sourceY: v.y,
+                    px: width / 2 + (x * scale * sphereSize * moveZScale) + screenOffsetX,
+                    py: height / 2 + (y * scale * sphereSize * moveZScale) + screenOffsetY
+                };
+            });
+            const light = { x: -0.35, y: -0.55, z: -1 };
+            const lightLength = Math.sqrt(light.x * light.x + light.y * light.y + light.z * light.z);
+            light.x /= lightLength; light.y /= lightLength; light.z /= lightLength;
+
+            const faces = mesh.faces.map(face => {
+                let avgZ = 0;
+                let avgY = 0;
+                face.forEach(index => {
+                    avgZ += transformed[index].z;
+                    avgY += transformed[index].sourceY;
+                });
+                avgZ /= face.length;
+                avgY /= face.length;
+                return { face, avgZ, avgY };
+            }).sort((a, b) => b.avgZ - a.avgZ);
+            faces.forEach(item => {
+                const a = transformed[item.face[0]];
+                const b = transformed[item.face[1]];
+                const c = transformed[item.face[2]];
+                const ux = b.x - a.x, uy = b.y - a.y, uz = b.z - a.z;
+                const vx = c.x - a.x, vy = c.y - a.y, vz = c.z - a.z;
+                let nx = uy * vz - uz * vy;
+                let ny = uz * vx - ux * vz;
+                let nz = ux * vy - uy * vx;
+                const normalLength = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1;
+                nx /= normalLength; ny /= normalLength; nz /= normalLength;
+                const lightAmount = Math.abs(nx * light.x + ny * light.y + nz * light.z);
+                const nearBoost = Math.max(0, 1 - ((item.avgZ + 1.5) / 3)) * 0.16;
+                const specular = Math.pow(Math.max(0, Math.abs(nz)), 14) * 0.16;
+                const shade = Math.max(0.22, Math.min(1.08, 0.34 + lightAmount * 0.52 + nearBoost + specular));
+                const gradientFactor = (item.avgY * -1 + 1) / 2;
+                const baseColor = mixRgb(rgb1, rgb2, gradientFactor);
+                const shadedColor = shadeRgb(baseColor, shade);
+                ctx.beginPath();
+                item.face.forEach((index, faceIndex) => {
+                    const point = transformed[index];
+                    if (faceIndex === 0) ctx.moveTo(point.px, point.py);
+                    else ctx.lineTo(point.px, point.py);
+                });
+                ctx.closePath();
+                ctx.fillStyle = "rgba(" + shadedColor.r + ", " + shadedColor.g + ", " + shadedColor.b + ", " + params.figureOpacity + ")";
+                ctx.fill();
+            });
+        }
+        
+        function getStateDuration(state) {
+            return Math.max(0.01, Number(state.duration) || 0.01) * Math.max(0.2, transitionDuration || 5);
+        }
+
+        function resolveTransitionPair() {
+            if (!transitionEnabled) return null;
+            if (transitionStates.length >= 2) {
+                const durations = transitionStates.map(getStateDuration);
+                const total = Math.max(0.2, transitionDuration || 5);
+                if (total <= 0) return null;
+                transitionTimeCounter += 1 / 60;
+                if (!transitionLoopEnabled && transitionTimeCounter >= total) {
+                    transitionTimeCounter = total;
+                }
+                let localTime = transitionLoopEnabled ? ((transitionTimeCounter % total) + total) % total : Math.min(transitionTimeCounter, total);
+                let acc = 0;
+                for (let i = 0; i < transitionStates.length; i++) {
+                    const segmentDuration = durations[i];
+                    if (localTime <= acc + segmentDuration) {
+                        const fromIndex = i;
+                        if (!transitionLoopEnabled && fromIndex === transitionStates.length - 1) {
+                            const lastState = transitionStates[fromIndex];
+                            if (lastState) applyStateToParams(lastState.data);
+                            return null;
+                        }
+                        const toIndex = transitionLoopEnabled ? (i + 1) % transitionStates.length : Math.min(i + 1, transitionStates.length - 1);
+                        const raw = (localTime - acc) / segmentDuration;
+                        const eased = applyTransitionEasing(raw, transitionStates[fromIndex]?.transitionEase || 'smooth');
+                        return { from: transitionStates[fromIndex], to: transitionStates[toIndex], t: eased };
+                    }
+                    acc += segmentDuration;
+                }
+            }
+            if (state1 && state2) {
+                const total = transitionDuration * 2;
+                transitionTimeCounter += 1 / 60;
+                if (!transitionLoopEnabled && transitionTimeCounter >= total) {
+                    transitionTimeCounter = total;
+                }
+                const phase = transitionLoopEnabled ? (transitionTimeCounter % total) / total : Math.min(transitionTimeCounter, total) / total;
+                const eased = applyTransitionEasing(phase, transitionStates[transitionStates.length - 1]?.transitionEase || 'smooth');
+                return {
+                    from: { id: -1, data: state1 },
+                    to: { id: -2, data: state2 },
+                    t: eased
+                };
+            }
+            return null;
+        }
+
+        canvas.addEventListener('click', () => { 
+            if(isPulseGlobalEnabled) pulseIntensity = params.pulseForce; 
+        });
+
+        function animate() {
+            let t = 0;
+            let activeMaxPoints = pointsArray.length;
+            let dataArray1 = pointsArray;
+            let dataArray2 = pointsArray;
+            let transitionFromShape = params.shape;
+            let transitionToShape = params.shape;
+            const transitionPair = resolveTransitionPair();
+
+            if (transitionPair) {
+                const fromData = transitionPair.from.data;
+                const toData = transitionPair.to.data;
+                t = transitionPair.t;
+
+                const segmentEffect = getTransitionEffectForState(transitionPair.from);
+                const segmentCloudSettings = getTransitionCloudSettingsForState(transitionPair.from);
+                const usesCloudDistortion = segmentEffect === 'particle-cloud' || segmentEffect === 'helix' || segmentEffect === 'double-helix';
+                const baseMaxPoints = Math.max(fromData.points, toData.points);
+                activeMaxPoints = usesCloudDistortion ? Math.max(1, Math.floor(baseMaxPoints * segmentCloudSettings.pointAmount)) : baseMaxPoints;
+                const keyA = transitionPair.from.id + '-' + fromData.shape + '-' + activeMaxPoints;
+                const keyB = transitionPair.to.id + '-' + toData.shape + '-' + activeMaxPoints;
+                if (!transitionArrayCache.has(keyA)) transitionArrayCache.set(keyA, generateShapeArray(fromData.shape, activeMaxPoints));
+                if (!transitionArrayCache.has(keyB)) transitionArrayCache.set(keyB, generateShapeArray(toData.shape, activeMaxPoints));
+                dataArray1 = transitionArrayCache.get(keyA);
+                dataArray2 = transitionArrayCache.get(keyB);
+
+                params.size = lerp(fromData.size, toData.size, t);
+                params.sphereRadius = lerp(fromData.sphereRadius, toData.sphereRadius, t);
+                params.trail = lerp(fromData.trail, toData.trail, t);
+                params.moveX = lerp(fromData.moveX || 0, toData.moveX || 0, t);
+                params.moveY = lerp(fromData.moveY || 0, toData.moveY || 0, t);
+                params.moveZ = lerp(fromData.moveZ || 0, toData.moveZ || 0, t);
+                params.speed = lerp(fromData.speed, toData.speed, t);
+                params.morph = lerp(fromData.morph, toData.morph, t);
+                params.rotX = lerp(fromData.rotX, toData.rotX, t);
+                params.rotY = lerp(fromData.rotY, toData.rotY, t);
+                params.pulseForce = lerp(fromData.pulseForce, toData.pulseForce, t);
+                params.pulseDecay = lerp(fromData.pulseDecay, toData.pulseDecay, t);
+                params.sizeImpact = lerp(fromData.sizeImpact, toData.sizeImpact, t);
+                params.speedImpact = lerp(fromData.speedImpact, toData.speedImpact, t);
+                params.color1 = lerpColor(fromData.color1, toData.color1, t);
+                params.color2 = lerpColor(fromData.color2, toData.color2, t);
+                params.backgroundColor = lerpColor(fromData.backgroundColor || '#000000', toData.backgroundColor || '#000000', t);
+                params.solidMesh = t < 0.5 ? !!fromData.solidMesh : !!toData.solidMesh;
+                params.figureOpacity = lerp(fromData.figureOpacity ?? 1, toData.figureOpacity ?? 1, t);
+                transitionFromShape = fromData.shape;
+                transitionToShape = toData.shape;
+            }
+
+            const bgRgb = hexToRgb(params.backgroundColor || '#000000');
+            ctx.fillStyle = "rgba(" + bgRgb.r + ", " + bgRgb.g + ", " + bgRgb.b + ", " + params.trail + ")";
+            ctx.fillRect(0, 0, width, height);
+            
+            pulseIntensity *= params.pulseDecay;
+            let currentSpeed = params.speed + (pulseIntensity * params.speedImpact);
+            let currentSize = params.size + (pulseIntensity * params.sizeImpact);
+            time += currentSpeed;
+            
+            const rotX = time * params.rotX, rotY = time * params.rotY;
+            const sphereSize = Math.min(width, height) * params.sphereRadius;
+            const screenOffsetX = (params.moveX || 0) * sphereSize;
+            const screenOffsetY = (params.moveY || 0) * sphereSize;
+            const moveZScale = getMoveZScale(params.moveZ);
+            const rgb1 = hexToRgb(params.color1), rgb2 = hexToRgb(params.color2);
+            const transitionEffect = transitionPair ? getTransitionEffectForState(transitionPair.from) : 'direct';
+            const cloudSettings = transitionPair ? getTransitionCloudSettingsForState(transitionPair.from) : { spread: 2.2, chaos: 0.8, pointSize: 0.75 };
+            const helixSettings = transitionPair ? getTransitionHelixSettingsForState(transitionPair.from) : { direction: 'forward', angle: 0, axisX: 0, axisY: 1, axisZ: 0, autoOrbit: false, tunnel: 0, thickness: 1, loops: 4.3, cloud: false, cloudIntensity: 0.8, drawDirection: 'forward' };
+            const usesCloudDistortion = transitionEffect === 'particle-cloud' || transitionEffect === 'helix' || transitionEffect === 'double-helix';
+            const cloudAmount = usesCloudDistortion ? getParticleCloudAmount(t) : 0;
+            const helixOrderAmount = transitionEffect === 'helix' || transitionEffect === 'double-helix' ? cloudAmount : 0;
+            const lockHelixOrbit = (transitionEffect === 'helix' || transitionEffect === 'double-helix') && !helixSettings.autoOrbit;
+            const renderRotX = lockHelixOrbit ? 0 : rotX;
+            const renderRotY = lockHelixOrbit ? 0 : rotY;
+
+            if (params.solidMesh && cloudAmount <= 0.001) {
+                const solidShape = transitionPair ? (t < 0.5 ? transitionFromShape : transitionToShape) : params.shape;
+                renderSolidShape(solidShape, rotX, rotY, sphereSize, rgb1, rgb2);
+                requestAnimationFrame(animate);
+                return;
+            }
+
+            for (let i = 0; i < activeMaxPoints; i++) {
+                let pBase = {};
+                if (transitionPair) {
+                    if (transitionEffect === 'particle-cloud') {
+                        const cloudPoint = getParticleCloudPoint(i, cloudSettings, time);
+                        const cloudPhase = t < 0.5 ? t * 2 : (t - 0.5) * 2;
+                        pBase = t < 0.5 ? blendParticlePoint(dataArray1[i], cloudPoint, cloudPhase) : blendParticlePoint(cloudPoint, dataArray2[i], cloudPhase);
+                    } else if (transitionEffect === 'helix' || transitionEffect === 'double-helix') {
+                        const traversalDelay = (i / Math.max(1, activeMaxPoints - 1)) * 0.28;
+                        const traversalProgress = t >= traversalDelay + 0.72 ? 1 : clamp((t - traversalDelay) / 0.72, 0, 1);
+                        const entryBlend = easeParticleTraversal(clamp(traversalProgress / 0.16, 0, 1));
+                        const exitStart = 0.82 + traversalDelay * 0.28;
+                        const exitBlend = easeParticleTraversal(clamp((t - exitStart) / (1 - exitStart), 0, 1));
+                        const cloudPoint = getHelixCloudPoint(i, cloudSettings, helixSettings, time, transitionEffect === 'double-helix', traversalProgress);
+                        pBase = blendParticlePoint(dataArray1[i], cloudPoint, entryBlend);
+                        pBase = blendParticlePoint(pBase, dataArray2[i], exitBlend);
+                    } else {
+                        pBase.origX = lerp(dataArray1[i].origX, dataArray2[i].origX, t);
+                        pBase.origY = lerp(dataArray1[i].origY, dataArray2[i].origY, t);
+                        pBase.origZ = lerp(dataArray1[i].origZ, dataArray2[i].origZ, t);
+                        pBase.theta = lerp(dataArray1[i].theta, dataArray2[i].theta, t);
+                        pBase.phiZ  = lerp(dataArray1[i].phiZ, dataArray2[i].phiZ, t);
+                    }
+                } else {
+                    pBase = pointsArray[i];
+                }
+
+                const morph = Math.sin(pBase.theta * 4 + time * 2) * Math.cos(pBase.phiZ * 3 - time) * params.morph * (1 - helixOrderAmount);
+                const r = 1 + morph;
+                let x = pBase.origX * r, y = pBase.origY * r, z = pBase.origZ * r;
+                let y1 = y * Math.cos(renderRotX) - z * Math.sin(renderRotX), z1 = y * Math.sin(renderRotX) + z * Math.cos(renderRotX); y = y1; z = z1;
+                let x1 = x * Math.cos(renderRotY) - z * Math.sin(renderRotY), z2 = x * Math.sin(renderRotY) + z * Math.cos(renderRotY); x = x1; z = z2;
+                const scale = (3 / (3 + z)) * moveZScale;
+                let px = width / 2 + (x * scale * sphereSize) + screenOffsetX, py = height / 2 + (y * scale * sphereSize) + screenOffsetY;
+                
+                const gradientFactor = (pBase.origY * -1 + 1) / 2;
+                ctx.fillStyle = "rgba(" + interpolateColor(rgb1, rgb2, gradientFactor) + ", " + params.figureOpacity + ")";
+                ctx.beginPath();
+                const drawSize = cloudAmount > 0 ? lerp(currentSize, currentSize * cloudSettings.pointSize, cloudAmount) : currentSize;
+                ctx.arc(px, py, Math.max(0.5, scale * drawSize), 0, Math.PI * 2);
+                ctx.fill();
+            }
+            requestAnimationFrame(animate);
+        }
+
+        initShape();
+        animate();
+    </script>
+</body>
+</html>

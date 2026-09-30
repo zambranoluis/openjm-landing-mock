@@ -1,0 +1,152 @@
+/* v4.23: mobile editorial layout. Interactions progressively enhance the
+   original articles, so all content remains available without JavaScript. */
+@media (max-width: 720px) {
+  /* Compact, open capability index. */
+  .capabilities { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; margin-top: 32px; }
+  .capability { flex-direction: row; gap: 12px; padding-block: 18px; border-bottom: 0; text-align: left; }
+  .capability:last-child { grid-column: 1 / -1; }
+  .capability-icon { flex: 0 0 48px; width: 48px; border: 0; background: rgba(47, 197, 139, .09); }
+  .capability-icon img { width: 28px; height: 28px; }
+  .capability-label { font-size: 1.0625rem; }
+
+  /* A manually explored horizontal strip; the next item remains visible. */
+  .use-cases-header { align-items: flex-start; margin-bottom: 28px; text-align: left; }
+  .case-stage { min-width: 0; }
+  .case-grid {
+    display: grid; grid-template-columns: none; grid-auto-flow: column;
+    width: calc(100% + var(--mobile-gutter)); max-width: none;
+    grid-auto-columns: calc(100% - 28px); gap: 14px;
+    overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory; scrollbar-width: none;
+    padding: 0; touch-action: pan-x;
+  }
+  .case-grid::-webkit-scrollbar { display: none; }
+  .case-grid .case-card {
+    position: relative; inset: auto; grid-column: auto; width: auto;
+    min-height: 0; padding: 24px 20px; scroll-snap-align: start; justify-self: stretch;
+    border: 1px solid rgba(47, 197, 139, .24); border-radius: 24px;
+    background: radial-gradient(ellipse at 100% 0, rgba(47, 197, 139, .17), transparent 70%), #0a1b15;
+    opacity: 1; transform: none;
+  }
+  .case-card .icon-box { width: 48px; height: 48px; margin-bottom: 28px; }
+  .case-card h3 { font-size: 1.25rem; line-height: 1.25; }
+  .case-card p { line-height: 1.55; }
+  .mobile-tab:focus-visible,
+  .case-grid:focus-visible,
+  .mobile-tabs-active [role="tabpanel"]:focus-visible {
+    outline: 2px solid #9df2cf; outline-offset: 4px;
+  }
+
+  /* A continuous timeline instead of three bordered containers. */
+  .demo-script { position: relative; margin-top: 40px; gap: 32px; }
+  .demo-script::before {
+    content: ""; position: absolute; left: 17px; top: 18px; bottom: 24px;
+    width: 1px; background: linear-gradient(#2fc58b, rgba(47, 197, 139, .12));
+  }
+  .demo-script .demo-step {
+    padding: 0 0 0 52px; margin-top: 0; border: 0; border-radius: 0;
+    background: transparent; box-shadow: none;
+  }
+  .demo-step-head { position: relative; min-height: 36px; margin-bottom: 16px; }
+  .demo-step-head .step-marker {
+    position: absolute; left: -52px; top: 0; width: 36px; height: 36px;
+    background: #08251b; color: #9df2cf; font-size: 1rem;
+  }
+  .demo-step h3 { font-size: 1.0625rem; line-height: 1.4; }
+  .demo-detail { padding: 8px 0; border: 0; background: none; }
+  .demo-detail-icon { width: 36px; height: 40px; }
+  .demo-detail { grid-template-columns: 36px minmax(0, 1fr); gap: 10px; }
+  .demo-detail-icon svg { width: 23px; height: 23px; }
+  .demo-result { grid-template-columns: 40px minmax(0, 1fr) 54px; gap: 8px; padding: 10px; }
+  .demo-result-file { width: 40px; height: 48px; }
+  .demo-result-file svg { width: 27px; height: 27px; }
+  .demo-result-chart { height: 46px; gap: 5px; }
+  .demo-result-chart i { width: 9px; }
+
+  /* Open editorial blocks, with a two-column pair where there is room. */
+  .ease-layout { gap: 32px; }
+  .journey { gap: 28px; }
+  .journey-card {
+    display: grid; grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: 16px; row-gap: 0; padding: 22px 0 0;
+    border: 0; border-top: 1px solid rgba(47, 197, 139, .35);
+    border-radius: 0; background: none; box-shadow: none; align-content: start;
+  }
+  .journey-card .journey-icon { grid-column: 1; grid-row: 1 / 3; width: 44px; height: 44px; border: 0; background: transparent; }
+  .journey-icon svg, .journey-icon img { width: 27px; height: 27px; }
+  .journey-card h3 { grid-column: 2; grid-row: 1; margin: 0 0 10px; align-self: start; font-size: 1.125rem; }
+  .journey-card p { grid-column: 2; grid-row: 2; }
+
+  /* Benefits and pricing share a consistent, keyboard-accessible selector. */
+  .mobile-tablist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; min-width: 0; }
+  .mobile-tab {
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+    min-width: 0; min-height: 48px; padding: 12px; border: 1px solid #284c3d;
+    border-radius: 12px; background: #081a13; color: #c4d7cc;
+    font: inherit; font-size: .9375rem; line-height: 1.4; text-align: left;
+    cursor: pointer; overflow-wrap: anywhere;
+  }
+  .mobile-tab[aria-selected="true"] { color: #effcf5; border-color: #2fc58b; background: #0d3c2c; box-shadow: inset 0 -3px #2fc58b; }
+  .mobile-tab-title { font-weight: 700; }
+  .mobile-tab-price { color: #9df2cf; font-size: .875rem; }
+  .mobile-tabs-active [hidden] { display: none !important; }
+  .mobile-tabs-active .benefit-panel,
+  .mobile-tabs-active .plan-card { opacity: 1; transform: none; }
+  .benefits-stage > .mobile-tablist { grid-column: 1 / -1; order: 0; }
+  .benefits-stage.mobile-tabs-active { gap: 24px; }
+  .benefits-stage.mobile-tabs-active .benefit-panel {
+    padding: 22px 0 0; border: 0; border-top: 1px solid var(--line);
+    border-radius: 0; background: transparent; box-shadow: none; order: 1;
+  }
+  .mobile-tabs-active .benefit-feature-head { grid-template-columns: 44px minmax(0, 1fr); gap: 14px; }
+  .mobile-tabs-active .benefit-icon { width: 44px; height: 44px; border-radius: 12px; }
+  .mobile-tabs-active .benefit-feature-head h3 { font-size: 1.125rem; }
+  .mobile-tabs-active .conversation-list,
+  .mobile-tabs-active .file-list,
+  .mobile-tabs-active .control-list { margin-top: 24px; }
+
+  /* Benefits become a compact attribute index; their detailed panels stay hidden. */
+  .benefits-stage.mobile-benefit-index-active { display: block; }
+  .benefits-stage.mobile-benefit-index-active .benefit-panel { display: none !important; }
+  .mobile-benefit-index {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px; margin: 28px 0 0; padding: 0; list-style: none;
+  }
+  .mobile-benefit-item {
+    display: flex; min-height: 58px; align-items: center; gap: 12px;
+    padding: 12px 14px; border: 1px solid rgba(47, 197, 139, .32);
+    border-radius: 14px; background: linear-gradient(145deg, #0b2a20, #071a13);
+  }
+  .mobile-benefit-title { color: #eaf6ef; font-size: .9375rem; font-weight: 700; line-height: 1.25; }
+  .plans-header { margin-bottom: 28px; text-align: left; }
+  .plans-header .section-copy { margin-inline: 0; }
+  .plans-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+  .plans-grid .plan-card { display: flex; min-height: 0; padding: 24px 20px; border-radius: 20px; }
+
+  /* FAQ keeps native disclosures but loses the repeated boxed appearance. */
+  .faq-list { gap: 0; }
+  .faq-list details { border: 0; border-bottom: 1px solid #284637; border-radius: 0; background: transparent; }
+  .faq-list details[open] { background: transparent; }
+  .faq-list summary { padding: 20px 40px 20px 0; }
+  .faq-list summary::after { right: 4px; }
+  .faq-answer { padding: 0 0 24px; }
+}
+
+@media (min-width: 400px) and (max-width: 720px) {
+  .journey { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; }
+  .journey-card:first-of-type { grid-column: 1 / -1; }
+  .journey-card:not(:first-of-type) { grid-template-columns: 1fr; }
+  .journey-card:not(:first-of-type) .journey-icon { grid-column: 1; grid-row: 1; margin-bottom: 14px; }
+  .journey-card:not(:first-of-type) h3 { grid-column: 1; grid-row: 2; }
+  .journey-card:not(:first-of-type) p { grid-column: 1; grid-row: 3; }
+}
+
+@media (max-width: 350px) {
+  .capabilities { column-gap: 12px; }
+  .capability { gap: 8px; }
+  .capability-icon { flex-basis: 40px; width: 40px; }
+  .demo-script .demo-step { padding-left: 44px; }
+  .demo-step-head .step-marker { left: -44px; }
+  .plans-grid.mobile-tabs-active .plan-card { padding-inline: 16px; }
+  .mobile-tabs-active .benefit-feature-head { grid-template-columns: 1fr; }
+}

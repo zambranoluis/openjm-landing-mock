@@ -1,0 +1,142 @@
+/* v4.22: compact mobile proportions. Readable text and touch targets are floors,
+   not scaled with the decorative elements. Desktop styles remain in styles.css. */
+@media (max-width: 720px) {
+  :root { --mobile-gutter: clamp(24px, 6vw, 40px); }
+
+  /* Shared gutters; retain the existing vertical rhythm between sections. */
+  .shell,
+  .trust-panel,
+  .ease-layout,
+  .benefits-section .shell,
+  .plans-section .shell,
+  .faq-section .shell,
+  .cta-section .shell,
+  .site-footer .shell {
+    width: min(calc(100% - var(--mobile-gutter) - var(--mobile-gutter)), var(--content));
+  }
+
+  /* Approximately 85% of the previous large type, with scalable rem values. */
+  .hero h1 { font-size: clamp(2.5925rem, 12.75vw, 3.9525rem); }
+  .trust-copy h2 { font-size: 2.635rem; }
+  .use-cases-header .section-title,
+  .benefits-copy .section-title,
+  .cta-copy h2 { font-size: 2.295rem; }
+  .demo-copy .section-title { font-size: 2.635rem; }
+  .ease-head .section-title { font-size: 2.04rem; }
+  .plans-header .section-title,
+  .faq-intro .section-title { font-size: 2.2525rem; }
+  .hero h1,
+  .section-title,
+  .trust-copy h2,
+  .cta-copy h2 { overflow-wrap: anywhere; }
+
+  .hero p,
+  .trust-copy p,
+  .use-cases-header .section-copy,
+  .demo-copy .section-copy,
+  .ease-head .section-copy,
+  .benefits-copy .section-copy,
+  .plans-header .section-copy,
+  .faq-intro .section-copy,
+  .cta-copy p { font-size: 1rem; line-height: 1.55; }
+
+  /* Let the mockup itself determine the reserved height. */
+  .hero .product-stage { min-height: 0; padding-bottom: 24px; }
+  .hero-demo-inline { width: 85%; margin-inline: auto; aspect-ratio: 1.85; }
+  .request-demo-inline { width: 85%; margin-inline: auto; aspect-ratio: 1.85; justify-self: center; }
+  .header-logo-image { height: 44px; }
+  .capability-icon { width: 83px; }
+  .capability-icon img { width: 41px; height: 41px; }
+  .capability-label { font-size: 1rem; }
+
+  /* Card padding gets slightly smaller, while gaps between cards are retained. */
+  .case-grid .case-card { padding: 20px; }
+  .icon-box { width: 56px; height: 56px; margin-bottom: 14px; border-radius: 15px; }
+  .icon-box img { width: 29px; height: 29px; }
+  .case-card h3 { font-size: 1.19rem; }
+  .case-card p,
+  .journey-card p,
+  .benefit-feature-head p { font-size: 1rem; line-height: 1.5; }
+  .journey-card { grid-template-columns: 61px minmax(0, 1fr); column-gap: 16px; padding: 19px; }
+  .journey-icon { width: 61px; height: 61px; }
+  .journey-icon svg, .journey-icon img { width: 27px; height: 27px; }
+  .journey-card h3 { font-size: 1.0625rem; line-height: 1.3; }
+
+  .demo-step { padding: 16px; }
+  .demo-step-head { gap: 12px; }
+  .step-marker { width: 43px; height: 43px; font-size: 1.23rem; }
+  .demo-detail { grid-template-columns: 44px minmax(0, 1fr); gap: 10px; }
+  .demo-detail-icon { width: 44px; height: 46px; }
+  .demo-detail-icon svg { width: 25px; height: 25px; }
+  .field-label { font-size: .875rem; }
+  .demo-detail p { font-size: 1rem; line-height: 1.5; overflow-wrap: anywhere; }
+  .demo-result { grid-template-columns: 53px minmax(0, 1fr) 66px; gap: 10px; }
+  .demo-result-file { width: 53px; height: 60px; }
+  .demo-result-file svg { width: 31px; height: 31px; }
+  .demo-result-chart { height: 56px; gap: 6px; }
+  .demo-result-chart i { width: 11px; }
+
+  /* Keep descriptions wide, and let the upload action have its own row. */
+  .benefit-panel { padding: 17px; }
+  .benefit-feature-head { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 14px; }
+  .benefit-icon { width: 54px; height: 54px; }
+  .benefit-icon svg, .benefit-icon img { width: 26px; height: 26px; }
+  .benefit-feature-head h3 { font-size: 1.0625rem; line-height: 1.3; }
+  .upload-file { grid-column: 1 / -1; justify-self: start; margin: 0; min-height: 44px; }
+  .row-icon { flex-basis: 36px; width: 36px; height: 36px; }
+  .row-icon img, .row-icon svg { width: 19px; height: 19px; }
+  .conversation-row strong, .file-row strong, .control-row strong {
+    white-space: normal; overflow-wrap: anywhere; line-height: 1.4; font-size: .9375rem;
+  }
+  .conversation-row small, .file-row small { font-size: .875rem; }
+  .tool-actions { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+  .tool-actions span { font-size: .875rem; }
+  .benefit-search span { white-space: normal; overflow-wrap: anywhere; line-height: 1.4; }
+
+  .plan-card { padding: 21px 17px 17px; }
+  .plan-heading { flex-wrap: wrap; gap: 8px; }
+  .plan-heading h3 { font-size: 1.275rem; }
+  .plan-price { flex-wrap: wrap; }
+  .plan-price strong { font-size: 1.7rem; }
+  .plan-features li { font-size: .875rem; line-height: 1.4; padding-block: 6px; }
+  .plan-features strong, .plan-features em { font-size: .875rem; white-space: normal; }
+  .current-plan, .plan-price span { font-size: .875rem; }
+  .faq-answer { font-size: 1rem; line-height: 1.5; }
+
+  /* Shrink the decorative scene by 15%, leaving room for its full orbit. */
+  .cta-panel { padding: 32px 20px 24px; }
+  .cta-visual { min-height: 300px; overflow: visible; }
+  .cta-scene { transform: translate(-50%, -50%) scale(.4675); }
+
+  /* Keep the two-column footer, with wrapping for long contacts and labels. */
+  .footer-logo-image { width: 221px; margin-left: 0; }
+  .footer-col h3 { font-size: 1.0625rem; }
+  .footer-brand p, .footer-col li, .footer-col a, .footer-col p,
+  .footer-bottom { font-size: 1rem; line-height: 1.5; overflow-wrap: anywhere; }
+  .footer-col ul a { min-height: 24px; }
+  .hero-copy .button-primary,
+  .cta-copy .button-primary,
+  .footer-col.footer-cta .button-primary {
+    max-width: 100%; min-height: 48px; padding: 10px 17px;
+    font-size: .92rem; line-height: 1.3; white-space: normal; text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .trust-copy h2 { font-size: 2.0825rem; }
+  .use-cases-header .section-title { font-size: 1.9125rem; }
+  .demo-copy .section-title { font-size: 2.108rem; }
+  .ease-head .section-title { font-size: 1.8275rem; }
+  .case-card h3 { font-size: 1.105rem; }
+  .step-marker { width: 36px; height: 36px; font-size: 1.0625rem; }
+  .journey-card { grid-template-columns: 1fr; padding: 17px; }
+  .journey-icon { width: 54px; height: 54px; }
+  .journey-icon svg, .journey-icon img { width: 25px; height: 25px; }
+  .benefit-feature-head { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 350px) {
+  .cta-visual { min-height: 260px; }
+  .cta-scene { transform: translate(-50%, -50%) scale(.3995); }
+  .plan-features li { grid-template-columns: 18px minmax(0, 1fr) minmax(0, 4.5rem); column-gap: 6px; }
+}

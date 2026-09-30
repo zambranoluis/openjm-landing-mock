@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080B0A">
+  <meta name="description" content="OpenJM is an AI platform created in Jamaica to turn ideas, information, and challenges into useful answers and solutions.">
+  <title>OpenJM — Think, explore, and build with artificial intelligence</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/hero-3d.css">
+  <link rel="stylesheet" href="assets/css/request-demo-3d.css">
+  <link rel="stylesheet" href="assets/css/mobile.css" media="(max-width: 720px)">
+  <link rel="stylesheet" href="assets/css/mobile-layout.css" media="(max-width: 720px)">
+</head>
+<body id="top">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <svg class="icon-sprite" aria-hidden="true" width="0" height="0">
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Zm0 0v6h6M8 13h8M8 17h8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m20 20-4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-8M22 19V2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v5l3.5 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M8.5 14.5A6.5 6.5 0 1 1 15.5 14.5c-.9.8-1.5 1.8-1.5 3h-4c0-1.2-.6-2.2-1.5-3Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5ZM4 12l8 4.5 8-4.5M4 16.5 12 21l8-4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-rocket" viewBox="0 0 24 24"><path d="M14 5c2.8-2.7 5.5-2.6 6-2 .6.6.7 3.3-2 6l-5.2 5.2-4-4ZM10.8 10.2l-4.6.8-2.2 2.2 4 1.2M13 13.2l-.8 4.6-2.2 2.2-1.2-4M14.5 7.5h.01" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="8.5" cy="9" r="1.4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m4 17 5-5 3 3 3-3 5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06-2.83 2.83-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21h-4v-.17a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06-2.83-2.83.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3v-4h.17a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06L7.12 4.3l.06.06A1.65 1.65 0 0 0 9 4a1.65 1.65 0 0 0 1-1.51V2h4v.17A1.65 1.65 0 0 0 15 3.68a1.65 1.65 0 0 0 1.82-.33l.06-.06 2.83 2.83-.06.06A1.65 1.65 0 0 0 19.32 8a1.65 1.65 0 0 0 1.51 1H21v4h-.17a1.65 1.65 0 0 0-1.43 1Z" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-loader" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="m21.44 11.05-8.49 8.49a6 6 0 0 1-8.49-8.49l8.49-8.49a4 4 0 0 1 5.66 5.66l-8.49 8.49a2 2 0 0 1-2.83-2.83l7.78-7.78" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z M22 2 11 13" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  </svg>
+
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand header-logo" href="#top" aria-label="OpenJM home"><img class="header-logo-image" src="resources/media/openjm-logo-negative.png" alt="" width="1452" height="596"></a>
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a href="#product">Product</a>
+        <a href="#use-cases">Use cases</a>
+        <a href="#benefits">Benefits</a>
+        <a href="#plans">Plans</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="header-actions">
+        <a class="button button-primary" href="#plans">Get started for free</a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-panel" aria-label="Open navigation"><span></span></button>
+      </div>
+    </div>
+    <nav class="mobile-panel" id="mobile-panel" aria-label="Mobile navigation">
+      <a href="#product">Product</a>
+      <a href="#use-cases">Use cases</a>
+      <a href="#benefits">Benefits</a>
+      <a href="#plans">Plans</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    <section class="hero section" id="product">
+      <div class="shell hero-grid">
+        <div class="hero-copy reveal">
+          <h1>Think explore and build with <span>artificial intelligence</span></h1>
+          <p><strong>OpenJM is an AI platform created in Jamaica to turn ideas, information, and challenges into useful answers and solutions.</strong></p>
+          <a class="button button-primary" href="#plans">Get started for free</a>
+        </div>
+
+        <div class="product-stage reveal" aria-label="OpenJM image generation animation">
+          <div class="hero-demo-inline" aria-label="OpenJM image generation animation">
+            <div class="hero-demo-scene" id="hero-demo-scene">
+              <div class="hero-demo-card-wrap" id="hero-demo-cardWrap">
+                <div class="hero-demo-floor-shadow"></div>
+                <div class="hero-demo-depth"></div>
+                <section class="hero-demo-card" id="hero-demo-card">
+                  <div class="hero-demo-stage-shell" id="hero-demo-stageShell">
+                    <div id="hero-demo-stage">
+                      <svg class="hero-demo-bg-svg" viewBox="0 0 1910 932" preserveAspectRatio="none" aria-hidden="true">
+                        <rect width="1910" height="932" fill="#050808"/>
+                        <path d="M46 0H1910V210C1754 214 1677 109 1515 83C1300 48 1165 110 988 84C817 59 713 11 532 38C397 58 328 140 269 232C213 320 153 411 46 428Z" fill="#090d0e"/>
+                        <path d="M46 0H501C430 32 399 90 359 153C303 241 235 337 151 393C112 419 75 430 46 431Z" fill="#111517" opacity=".97"/>
+                        <path d="M46 0H178C155 56 129 101 93 132C76 147 60 154 46 157Z" fill="#161a1c" opacity=".72"/>
+                        <path d="M1560 0H1910V256C1860 241 1816 205 1788 160C1746 94 1678 30 1560 0Z" fill="#0a0e0f" opacity=".96"/>
+                      </svg>
+                      
+                      <aside class="hero-demo-sidebar" aria-label="OpenJM navigation">
+                        <div class="hero-demo-brand" aria-hidden="true">
+                          <img src="resources/media/colibri.svg" alt="">
+                        </div>
+                        <div class="hero-demo-nav-stack">
+                          <div class="hero-demo-nav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M6.5 19c.8-4 10.2-4 11 0"/></svg></div>
+                          <div class="hero-demo-nav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.5 1a8 8 0 0 0-1.7-1L14.4 3h-4.8l-.3 3.1a8 8 0 0 0-1.7 1l-2.5-1-2 3.4L5.1 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.5-1a8 8 0 0 0 1.7 1l.3 3.1h4.8l.3-3.1a8 8 0 0 0 1.7-1l2.5 1 2-3.4-2-1.5a7 7 0 0 0 .1-1Z"/></svg></div>
+                          <div class="hero-demo-nav-sep"></div>
+                          <div class="hero-demo-nav-item"><svg viewBox="0 0 24 24"><path d="M5 5h14v10H9l-4 4V5Z"/><path d="M15 8h2M15 11h2"/></svg></div>
+                          <div class="hero-demo-nav-item hero-demo-active"><svg viewBox="0 0 24 24"><path d="M5 5h14v10H9l-4 4V5Z"/><path d="m15 10 2 2 3-4"/></svg></div>
+                          <div class="hero-demo-nav-item"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg></div>
+                        </div>
+                        <div class="hero-demo-nav-item hero-demo-logout"><svg viewBox="0 0 24 24"><path d="M10 5H5v14h5"/><path d="M13 8l4 4-4 4M17 12H9"/></svg></div>
+                      </aside>
+
+                      <div class="hero-demo-intro" id="hero-demo-intro">
+                        <div class="hero-demo-hero-copy">
+                          <h1 class="hero-demo-hero-title">Intelligence That Stays With You</h1>
+                          <p class="hero-demo-hero-sub">Born in the Caribbean. Built to remember your world, think alongside you, and turn every idea into forward motion.</p>
+                        </div>
+                        <div class="hero-demo-composer" id="hero-demo-heroComposer">
+                          <div class="hero-demo-composer-text hero-demo-typed" id="hero-demo-typedPrompt"></div>
+                          <div class="hero-demo-composer-count" id="hero-demo-composerCount">0/4000</div>
+                          <div class="hero-demo-composer-prep" id="hero-demo-composerPrep">
+                            <div class="hero-demo-prep-pill hero-demo-image"><span class="hero-demo-prep-icon"><svg viewBox="0 0 24 24"><rect x="4.5" y="5" width="15" height="14" rx="2.2"/><circle cx="10" cy="10" r="1.5"/><path d="m8 16 3.1-3.2 2.3 2.1 2.6-2.8 2 3.9"/></svg></span><span>Image</span><span class="hero-demo-prep-caret">⌄</span></div>
+                            <div class="hero-demo-prep-pill hero-demo-negative"><span>Negative prompt</span><span class="hero-demo-prep-caret">⌄</span></div>
+                          </div>
+                          <div class="hero-demo-composer-plus">+</div>
+                          <div class="hero-demo-composer-actions">
+                            <div class="hero-demo-mode-pill"><span class="hero-demo-deep">◉ Deep</span><span>rahkia-v1⌄</span></div>
+                            <svg class="hero-demo-send-icon" viewBox="0 0 24 24"><path d="M3 11.5 21 4l-7.5 17-2.3-6.7L3 11.5Z" fill="none" stroke="#b5bebb" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                          </div>
+                        </div>
+                        <div class="hero-demo-composer-menu" id="hero-demo-composerMenu">
+                          <div class="hero-demo-composer-menu-item hero-demo-active"><svg viewBox="0 0 24 24"><rect x="4.5" y="5" width="15" height="14" rx="2.2"/><circle cx="10" cy="10" r="1.5"/><path d="m8 16 3.1-3.2 2.3 2.1 2.6-2.8 2 3.9"/></svg><span>Image</span></div>
+                          <div class="hero-demo-composer-menu-item"><svg viewBox="0 0 24 24"><path d="M8 18V7.5a1 1 0 0 1 1.55-.84L18 12l-8.45 5.34A1 1 0 0 1 8 16.5Z"/></svg><span>Music</span></div>
+                          <div class="hero-demo-composer-menu-item"><svg viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="10" rx="2"/><path d="m11 10 4 2-4 2Z"/></svg><span>Video</span></div>
+                        </div>
+                        <div class="hero-demo-composer-panel" id="hero-demo-composerPanel">
+                          <div class="hero-demo-panel-side">
+                            <div class="hero-demo-panel-upload"><svg viewBox="0 0 24 24"><path d="M12 16V6"/><path d="m8.5 9.5 3.5-3.5 3.5 3.5"/><path d="M5 18h14"/></svg><span>Upload Files</span></div>
+                            <div class="hero-demo-panel-side-item hero-demo-active"><svg viewBox="0 0 24 24"><rect x="4.5" y="5" width="15" height="14" rx="2.2"/><circle cx="10" cy="10" r="1.5"/><path d="m8 16 3.1-3.2 2.3 2.1 2.6-2.8 2 3.9"/></svg><span>Image</span></div>
+                            <div class="hero-demo-panel-side-item"><svg viewBox="0 0 24 24"><path d="M8 18V7.5a1 1 0 0 1 1.55-.84L18 12l-8.45 5.34A1 1 0 0 1 8 16.5Z"/></svg><span>Music</span></div>
+                            <div class="hero-demo-panel-side-item"><svg viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="10" rx="2"/><path d="m11 10 4 2-4 2Z"/></svg><span>Video</span></div>
+                          </div>
+                          <div class="hero-demo-panel-main">
+                            <div class="hero-demo-panel-top"><div class="hero-demo-panel-back">‹</div><div class="hero-demo-panel-title">Image generation</div><div class="hero-demo-panel-badge">Active</div></div>
+                            <div class="hero-demo-panel-sub">Generate an image from your prompt.</div>
+                            <div class="hero-demo-panel-label">Image size</div>
+                            <div class="hero-demo-size-grid">
+                              <div class="hero-demo-size-card hero-demo-active" data-size="11"><div class="hero-demo-size-card-icon" style="width:20px;height:20px"></div><strong>Social post</strong><span>1:1</span></div>
+                              <div class="hero-demo-size-card" data-size="45"><div class="hero-demo-size-card-icon" style="width:18px;height:22px"></div><strong>Social feed</strong><span>4:5</span></div>
+                              <div class="hero-demo-size-card" data-size="34"><div class="hero-demo-size-card-icon" style="width:16px;height:22px"></div><strong>Social portrait</strong><span>3:4</span></div>
+                              <div class="hero-demo-size-card" data-size="191"><div class="hero-demo-size-card-icon" style="width:22px;height:12px"></div><strong>Link preview</strong><span>1.91:1</span></div>
+                              <div class="hero-demo-size-card" data-size="916"><div class="hero-demo-size-card-icon" style="width:11px;height:22px"></div><strong>Stories &amp; Reels</strong><span>9:16</span></div>
+                              <div class="hero-demo-size-card" data-size="169"><div class="hero-demo-size-card-icon" style="width:22px;height:12px"></div><strong>Wallpaper &amp; video</strong><span>16:9</span></div>
+                            </div>
+                            <div class="hero-demo-panel-fields">
+                              <div class="hero-demo-panel-field"><label>Steps</label><div class="hero-demo-box">60</div></div>
+                              <div class="hero-demo-panel-field"><label>Seed</label><div class="hero-demo-box">Random</div></div>
+                            </div>
+                            <div class="hero-demo-panel-note">Intelligence level sets these values by default. Typing custom values overrides default values.</div>
+                          </div>
+                        </div>
+                        <div class="hero-demo-status-pill" id="hero-demo-heroStatus">Generating image...</div>
+                      </div>
+
+                      <div class="hero-demo-conversation" id="hero-demo-conversation">
+                        <div class="hero-demo-conversation-inner hero-demo-gen-thread" id="hero-demo-conversationInner">
+                          <div class="hero-demo-gen-user-row" id="hero-demo-genUserRow">
+                            <div class="hero-demo-gen-user-bubble">
+                              <div class="hero-demo-gen-user-text">create an image of a beach at sunset in pixel art style</div>
+                              <div class="hero-demo-gen-user-meta"><span>▣</span><span>09/21/2026 08:50 AM</span></div>
+                            </div>
+                          </div>
+                          <div class="hero-demo-gen-result-card" id="hero-demo-resultCard">
+                            <div class="hero-demo-gen-result-stage" id="hero-demo-resultStage">
+                              <div class="hero-demo-gen-result-image-wrap" id="hero-demo-resultImageWrap">
+                                <img class="hero-demo-gen-result-image" alt="Generated pixel art beach scene" src="resources/media/hero-generated-beach.png" />
+                              </div>
+                            </div>
+                            <div class="hero-demo-gen-card-label">Generated image</div>
+                            <div class="hero-demo-gen-card-actions" id="hero-demo-resultActions">
+                              <span class="hero-demo-accent">◉ Thought</span>
+                              <span>❝ Quotes</span>
+                              <span>❝ Sources</span>
+                              <span>▣ Copy</span>
+                              <span>⇩ Download</span>
+                            </div>
+                            <div class="hero-demo-gen-card-stamp" id="hero-demo-resultStamp">09/21/2026 08:50 AM</div>
+                            <div class="hero-demo-gen-card-work" id="hero-demo-resultWork">Worked for 0m 28s&nbsp;&nbsp;<b>Tokens unavailable for image generation</b></div>
+                            <div class="hero-demo-gen-card-frame"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="hero-demo-page-scroll" id="hero-demo-pageScroll"><div class="hero-demo-page-scroll-thumb" id="hero-demo-pageThumb"></div></div>
+
+                      <div class="hero-demo-bottom-area" id="hero-demo-bottomArea">
+                        <div class="hero-demo-bottom-disclaimer">OpenJM can make mistakes. Check what matters.</div>
+                        <div class="hero-demo-bottom-status" id="hero-demo-bottomStatus">Generating image...</div>
+                        <div class="hero-demo-chat-composer" id="hero-demo-chatComposer">
+                          <div class="hero-demo-chat-plus">+</div>
+                          <div class="hero-demo-chat-placeholder">Ask a question...</div>
+                          <div class="hero-demo-chat-right">
+                            <div class="hero-demo-chat-mini"><b>◉ Deep</b><span>rahkia-v1⌄</span></div>
+                            <svg width="17" height="17" viewBox="0 0 24 24"><path d="M3 11.5 21 4l-7.5 17-2.3-6.7L3 11.5Z" fill="none" stroke="#6f7976" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                          </div>
+                        </div>
+                      </div>
+
+                      <canvas id="hero-demo-particleCanvas" width="1910" height="932" aria-hidden="true"></canvas>
+                    </div>
+                  </div>
+                  <div class="hero-demo-glass"></div>
+                  <div class="hero-demo-edge"></div>
+                </section>
+              </div>
+            </div>
+          </div>
+          <div class="hero-demo" id="hero3dDemo" aria-label="OpenJM image generation animation">
+            <div class="hero-demo-depth" aria-hidden="true"></div>
+            <div class="hero-demo-card" id="hero3dCard">
+              <div class="hero-demo-topbar"><span class="hero-demo-brand"><i></i>OpenJM</span><span>Image generation</span><span class="hero-demo-live"><b></b>Live</span></div>
+              <div class="hero-demo-surface">
+                <div class="hero-demo-glow" aria-hidden="true"></div>
+                <div class="hero-demo-intro" id="hero3dIntro">
+                  <span class="hero-demo-kicker">OpenJM studio</span>
+                  <strong>Turn an idea into an image</strong>
+                  <div class="hero-demo-composer">
+                    <span class="hero-demo-plus">+</span>
+                    <span class="hero-demo-prompt" id="hero3dPrompt">Ask for an image</span>
+                    <span class="hero-demo-mode">Deep</span>
+                    <span class="hero-demo-send">&uarr;</span>
+                  </div>
+                </div>
+                <div class="hero-demo-status" id="hero3dStatus">Generating image</div>
+                <div class="hero-demo-result" id="hero3dResult">
+                  <div class="hero-demo-result-image" aria-hidden="true"><span>OPENJM</span></div>
+                  <div class="hero-demo-result-copy"><strong>Generated image</strong><span>Thought&nbsp;&nbsp; Quotes&nbsp;&nbsp; Download</span></div>
+                </div>
+                <canvas id="hero3dParticles" width="960" height="620" aria-hidden="true"></canvas>
+                <div class="hero-demo-foot"><span>Image generation</span><span>01 / 03</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="product-window">
+            <aside class="mock-sidebar" aria-hidden="true">
+              <div class="mock-logo"><i></i>OpenJM</div>
+              <ul class="mock-nav">
+                <li><b></b>New conversation</li><li><b></b>Conversations</li><li><b></b>Files</li><li><b></b>Tools</li><li><b></b>Settings</li>
+              </ul>
+            </aside>
+            <div class="mock-content">
+              <div class="mock-topline"><span>Project workspace</span><span>OpenJM</span></div>
+              <h2 class="mock-heading">From a request to a result you can use</h2>
+              <div class="prompt-box">
+                <div class="file-chip">Project brief.pdf</div>
+                <p class="prompt-copy">Analyse this brief and turn it into an action plan with priorities and next steps.</p>
+                <div class="prompt-actions"><span>Research</span><span>Analyse</span><span>Files</span><span class="send-dot">↑</span></div>
+              </div>
+              <div class="result-row" aria-hidden="true">
+                <div class="result-card"><strong>Organised conversations</strong><div class="chart-line"></div></div>
+                <div class="result-card"><strong>Documents and files</strong><div class="chart-line"></div></div>
+                <div class="result-card"><strong>Usage and settings control</strong><div class="chart-line"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="cube-stack" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section trust-section" aria-labelledby="trust-title">
+      <div class="shell trust-panel reveal">
+        <div class="trust-copy">
+          <h2 id="trust-title"><span class="trust-title-line">Innovation for ideas</span> that want to go <span class="accent">further</span></h2>
+          <p>OpenJM brings together artificial intelligence and practical tools to support individuals, professionals, and businesses across the Caribbean and beyond.</p>
+        </div>
+        <ul class="capabilities" aria-label="Capabilities">
+          <li class="capability"><span class="capability-icon" aria-hidden="true"><img src="resources/iconos/conversation.svg" alt=""></span><span class="capability-label">Ask</span></li>
+          <li class="capability"><span class="capability-icon" aria-hidden="true"><img src="resources/iconos/edit.svg" alt=""></span><span class="capability-label">Create</span></li>
+          <li class="capability"><span class="capability-icon" aria-hidden="true"><img src="resources/iconos/file-search.svg" alt=""></span><span class="capability-label">Research</span></li>
+          <li class="capability"><span class="capability-icon" aria-hidden="true"><img src="resources/iconos/chart.svg" alt=""></span><span class="capability-label">Analyse</span></li>
+          <li class="capability"><span class="capability-icon" aria-hidden="true"><img src="resources/iconos/build.svg" alt=""></span><span class="capability-label">Build</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section use-cases-section" id="use-cases" aria-labelledby="cases-title">
+      <div class="shell">
+        <div class="use-cases-header reveal">
+          <h2 class="section-title" id="cases-title"><span class="cases-title-line">Turn your goals</span> into real progress</h2>
+          <p class="section-copy">Expand what is possible and take your ideas further with artificial intelligence.</p>
+        </div>
+        <div class="case-stage">
+          <svg class="case-connectors case-connectors-lines" viewBox="0 0 1240 790" aria-hidden="true">
+            <path pathLength="1" d="M482 145 C396 145 420 61 364 61 H342"/>
+            <path pathLength="1" d="M758 145 C844 145 820 61 876 61 H898"/>
+            <path pathLength="1" d="M448 354 C400 354 414 434 362 434 H342"/>
+            <path pathLength="1" d="M792 354 C840 354 826 434 878 434 H898"/>
+            <path pathLength="1" d="M620 470 V545"/>
+          </svg>
+          <svg class="case-connectors case-connectors-nodes" viewBox="0 0 1240 790" aria-hidden="true">
+            <circle cx="342" cy="61" r="9"/><circle cx="482" cy="145" r="9"/>
+            <circle cx="898" cy="61" r="9"/><circle cx="758" cy="145" r="9"/>
+            <circle cx="342" cy="434" r="9"/><circle cx="448" cy="354" r="9"/>
+            <circle cx="898" cy="434" r="9"/><circle cx="792" cy="354" r="9"/>
+            <circle cx="620" cy="470" r="9"/><circle cx="620" cy="545" r="9"/>
+          </svg>
+          <div class="case-wheel" aria-hidden="true">
+            <svg class="case-wheel-art" viewBox="0 0 500 500">
+              <circle class="wheel-outer" cx="250" cy="250" r="245"/>
+              <circle class="wheel-inner" cx="250" cy="250" r="213"/>
+               <path class="wheel-sector" d="M 68.39 176.28 A 196 196 0 0 1 236.01 54.50 Q 246.00 54.04 246.00 64.04 L 246.00 160.10 Q 246.00 170.10 236.07 171.22 A 80 80 0 0 0 179.38 212.41 Q 175.25 221.51 165.74 218.42 L 74.38 188.73 Q 64.87 185.64 68.39 176.28 Z"/>
+              <path class="wheel-sector" d="M 263.99 54.50 A 196 196 0 0 1 431.61 176.28 Q 435.13 185.64 425.62 188.73 L 334.26 218.42 Q 324.75 221.51 320.62 212.41 A 80 80 0 0 0 263.93 171.22 Q 254.00 170.10 254.00 160.10 L 254.00 64.04 Q 254.00 54.04 263.99 54.50 Z"/>
+              <path class="wheel-sector" d="M 440.25 202.89 A 196 196 0 0 1 376.23 399.94 Q 368.42 406.18 362.54 398.09 L 306.08 320.38 Q 300.20 312.29 307.57 305.54 A 80 80 0 0 0 329.23 238.90 Q 327.23 229.11 336.74 226.02 L 428.09 196.34 Q 437.60 193.25 440.25 202.89 Z"/>
+              <path class="wheel-sector" d="M 353.60 416.39 A 196 196 0 0 1 146.40 416.39 Q 138.05 410.89 143.93 402.80 L 200.39 325.08 Q 206.27 316.99 214.97 321.92 A 80 80 0 0 0 285.03 321.92 Q 293.73 316.99 299.61 325.08 L 356.07 402.80 Q 361.95 410.89 353.60 416.39 Z"/>
+              <path class="wheel-sector" d="M 123.77 399.94 A 196 196 0 0 1 59.75 202.89 Q 62.40 193.25 71.91 196.34 L 163.26 226.02 Q 172.77 229.11 170.77 238.90 A 80 80 0 0 0 192.43 305.54 Q 199.80 312.29 193.92 320.38 L 137.46 398.09 Q 131.58 406.18 123.77 399.94 Z"/>
+              <circle class="wheel-core" cx="250" cy="250" r="69"/>
+            </svg>
+            <img class="wheel-icon wheel-icon-users" src="resources/iconos/users.svg" alt="">
+            <img class="wheel-icon wheel-icon-edit" src="resources/iconos/edit.svg" alt="">
+            <img class="wheel-icon wheel-icon-list" src="resources/iconos/list.svg" alt="">
+            <img class="wheel-icon wheel-icon-briefcase" src="resources/iconos/briefcase.svg" alt="">
+            <img class="wheel-icon wheel-icon-file" src="resources/iconos/file-text.svg" alt="">
+            <canvas class="wheel-morph" width="200" height="200" aria-hidden="true"></canvas>
+            <img class="wheel-icon wheel-icon-center" src="resources/iconos/sparkle.svg" alt="">
+          </div>
+          <div class="case-grid">
+            <article class="case-card reveal"><div class="icon-box" aria-hidden="true"><img src="resources/iconos/users.svg" alt=""></div><h3>Understand and explore</h3><p>Get clear explanations, answer questions, and examine different perspectives on a topic.</p></article>
+            <article class="case-card reveal"><div class="icon-box" aria-hidden="true"><img src="resources/iconos/edit.svg" alt=""></div><h3>Write and improve</h3><p>Prepare emails, proposals, reports, and other content, while improving their tone, structure, and clarity.</p></article>
+            <article class="case-card reveal"><div class="icon-box" aria-hidden="true"><img src="resources/iconos/file-text.svg" alt=""></div><h3>Work with files</h3><p>Upload documents and analyse their content directly within the conversation.</p></article>
+            <article class="case-card reveal"><div class="icon-box" aria-hidden="true"><img src="resources/iconos/list.svg" alt=""></div><h3>Research and organise</h3><p>Summarise information and turn it into useful plans, lists, or structures.</p></article>
+            <article class="case-card reveal"><div class="icon-box" aria-hidden="true"><img src="resources/iconos/briefcase.svg" alt=""></div><h3>Move your work forward</h3><p>Develop ideas, organise projects, and prepare materials for clients or teams.</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section demo-section" id="demo" aria-labelledby="demo-title">
+      <div class="shell demo-layout">
+        <div class="demo-overview">
+          <div class="demo-copy reveal">
+            <h2 class="section-title" id="demo-title">From a request<br>to a result <span class="demo-title-accent">you<br>can use</span></h2>
+            <p class="section-copy">Describe what you need or attach an image, document, or code. Receive a clear response and continue developing your work within the same conversation.</p>
+          </div>
+          <div class="request-demo-inline reveal" aria-label="OpenJM file upload and brief analysis animation">
+            <div class="request-demo-scene" id="request-demo-scene">
+              <div class="request-demo-card-wrap" id="request-demo-cardWrap">
+                <div class="request-demo-floor-shadow"></div>
+                <div class="request-demo-depth"></div>
+                <section class="request-demo-card" id="request-demo-card">
+                  <div class="request-demo-stage-shell" id="request-demo-stageShell">
+                    <div id="request-demo-stage">
+                      <svg class="request-demo-bg-svg" viewBox="0 0 1910 932" preserveAspectRatio="none" aria-hidden="true">
+                        <rect width="1910" height="932" fill="#050808"/>
+                        <path d="M46 0H1910V210C1754 214 1677 109 1515 83C1300 48 1165 110 988 84C817 59 713 11 532 38C397 58 328 140 269 232C213 320 153 411 46 428Z" fill="#090d0e"/>
+                        <path d="M46 0H501C430 32 399 90 359 153C303 241 235 337 151 393C112 419 75 430 46 431Z" fill="#111517" opacity=".97"/>
+                        <path d="M46 0H178C155 56 129 101 93 132C76 147 60 154 46 157Z" fill="#161a1c" opacity=".72"/>
+                        <path d="M1560 0H1910V256C1860 241 1816 205 1788 160C1746 94 1678 30 1560 0Z" fill="#0a0e0f" opacity=".96"/>
+                      </svg>
+            
+                      
+            
+            
+                      <aside class="request-demo-sidebar" aria-label="OpenJM navigation">
+                        <div class="request-demo-brand" aria-hidden="true">
+                          <img src="resources/media/colibri.svg" alt="">
+                        </div>
+                        <div class="request-demo-nav-stack">
+                          <div class="request-demo-nav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M6.5 19c.8-4 10.2-4 11 0"/></svg></div>
+                          <div class="request-demo-nav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.5 1a8 8 0 0 0-1.7-1L14.4 3h-4.8l-.3 3.1a8 8 0 0 0-1.7 1l-2.5-1-2 3.4L5.1 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.5-1a8 8 0 0 0 1.7 1l.3 3.1h4.8l.3-3.1a8 8 0 0 0 1.7-1l2.5 1 2-3.4-2-1.5a7 7 0 0 0 .1-1Z"/></svg></div>
+                          <div class="request-demo-nav-sep"></div>
+                          <div class="request-demo-nav-item"><svg viewBox="0 0 24 24"><path d="M5 5h14v10H9l-4 4V5Z"/><path d="M15 8h2M15 11h2"/></svg></div>
+                          <div class="request-demo-nav-item request-demo-active"><svg viewBox="0 0 24 24"><path d="M5 5h14v10H9l-4 4V5Z"/><path d="m15 10 2 2 3-4"/></svg></div>
+                          <div class="request-demo-nav-item"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg></div>
+                        </div>
+                        <div class="request-demo-nav-item request-demo-logout"><svg viewBox="0 0 24 24"><path d="M10 5H5v14h5"/><path d="M13 8l4 4-4 4M17 12H9"/></svg></div>
+                      </aside>
+            
+                      <div class="request-demo-intro" id="request-demo-intro">
+                        <div class="request-demo-hero-copy">
+                          <h1 class="request-demo-hero-title">Intelligence That Stays With You</h1>
+                          <p class="request-demo-hero-sub">Born in the Caribbean. Built to remember your world, think alongside you, and turn every idea into forward motion.</p>
+                        </div>
+                        <div class="request-demo-file-picker" id="request-demo-filePicker" aria-hidden="true">
+                          <div class="request-demo-picker-bar"><strong>Open</strong><div class="request-demo-picker-address">Documents / Project Briefs</div></div>
+                          <div class="request-demo-picker-body">
+                            <div class="request-demo-picker-side">
+                              <div>Quick access</div><div>Documents</div><div>Downloads</div><div>Desktop</div><div>Recent</div>
+                            </div>
+                            <div class="request-demo-picker-files">
+                              <div class="request-demo-picker-file" id="request-demo-pickerFile">
+                                <div class="request-demo-pdf-icon"></div>
+                                <div>General_Project_Brief.pdf</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="request-demo-picker-footer">
+                            <div class="request-demo-picker-btn">Cancel</div>
+                            <div class="request-demo-picker-btn request-demo-primary" id="request-demo-pickerOpenBtn">Open</div>
+                          </div>
+                        </div>
+                        <div class="request-demo-composer" id="request-demo-heroComposer">
+                          <div class="request-demo-attachment-strip" id="request-demo-attachmentStrip">
+                            <div class="request-demo-upload-chip" id="request-demo-uploadChip">
+                              <div class="request-demo-upload-file-card"><div class="request-demo-pdf-icon"></div><div class="request-demo-upload-close">&#215;</div></div>
+                              <div class="request-demo-upload-copy">
+                                <div class="request-demo-upload-name">General_Project_Brief.pdf</div>
+                                <div class="request-demo-upload-type">PDF document</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="request-demo-composer-text request-demo-typed" id="request-demo-typedPrompt"></div>
+                          <div class="request-demo-composer-plus">+</div>
+                          <div class="request-demo-composer-actions">
+                            <div class="request-demo-mode-pill"><span class="request-demo-deep">&#9673; Deep</span><span>rahkia-v1&#8964;</span></div>
+                            <svg class="request-demo-send-icon" viewBox="0 0 24 24"><path d="M3 11.5 21 4l-7.5 17-2.3-6.7L3 11.5Z" fill="none" stroke="#b5bebb" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                          </div>
+                        </div>
+                        <div class="request-demo-status-pill" id="request-demo-heroStatus">Uploading attachment...</div>
+                      </div>
+            
+                      <div class="request-demo-conversation" id="request-demo-conversation">
+                        <div class="request-demo-conversation-inner" id="request-demo-conversationInner">
+                          <div class="request-demo-user-row">
+                            <div class="request-demo-user-bubble">
+                              <div class="request-demo-user-text">Analyze this brief and turn it into an action plan with priorities and next steps.</div>
+                              <div class="request-demo-user-attachment"><div class="request-demo-pdf-icon"></div><span>General_Project_Brief.pdf</span></div>
+                            <div class="request-demo-user-meta"><span>&#9641;</span><span>09/21/2026 12:01 PM</span></div>
+                            </div>
+                          </div>
+                          <div class="request-demo-analysis-timer" id="request-demo-analysisTimer">Working for 0m 1s</div>
+                          <div class="request-demo-think-box" id="request-demo-thinkingBox">
+                            <div class="request-demo-think-label">
+                              <div class="request-demo-analysis-bars"><i></i><i></i><i></i><i></i></div>
+                              <span>Analyzing attachment</span>
+                            </div>
+                            <div class="request-demo-think-copy">Rahkia is analyzing the attached file and generating a response.</div>
+                          </div>
+                          <div class="request-demo-answer" id="request-demo-answer"></div>
+                          <div class="request-demo-assistant-meta" id="request-demo-assistantMeta">
+                            <div class="request-demo-meta-actions"><span>&#9673; Thought</span><span>&#10077; Quotes</span><span>&#10077; Sources</span><span>&#9641; Copy</span></div>
+                            <div>09/21/2026 12:01 PM</div>
+                          </div>
+                          <div class="request-demo-workline" id="request-demo-workline">Working for 0m 1s</div>
+                          <div class="request-demo-tokenline" id="request-demo-tokenline"></div>
+                        </div>
+                      </div>
+            
+                      <div class="request-demo-page-scroll" id="request-demo-pageScroll"><div class="request-demo-page-scroll-thumb" id="request-demo-pageThumb"></div></div>
+            
+                      <div class="request-demo-bottom-area" id="request-demo-bottomArea">
+                        <div class="request-demo-bottom-disclaimer">OpenJM can make mistakes. Check what matters.</div>
+                        <div class="request-demo-bottom-status" id="request-demo-bottomStatus">Generating a response...</div>
+                        <div class="request-demo-chat-composer" id="request-demo-chatComposer">
+                          <div class="request-demo-chat-plus">+</div>
+                          <div class="request-demo-chat-placeholder">Ask a question...</div>
+                          <div class="request-demo-chat-right">
+                            <div class="request-demo-chat-mini"><b>&#9673; Deep</b><span>rahkia-v1&#8964;</span></div>
+                            <svg width="17" height="17" viewBox="0 0 24 24"><path d="M3 11.5 21 4l-7.5 17-2.3-6.7L3 11.5Z" fill="none" stroke="#6f7976" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                          </div>
+                        </div>
+                      </div>
+            
+                      <canvas id="request-demo-particleCanvas" width="1910" height="932" aria-hidden="true"></canvas>
+                    </div>
+                  </div>
+                  <div class="request-demo-glass"></div>
+                  <div class="request-demo-edge"></div>
+                </section>
+              </div>
+            </div>
+          </div>
+          <div class="demo-frame reveal">
+            <div class="demo-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="demo-app">
+              <div class="demo-sidebar" aria-hidden="true">
+                <div class="demo-brand"><span class="demo-brand-dot"></span><span class="demo-brand-text">OpenJM</span></div>
+                <div class="demo-nav-item demo-nav-active"><svg><use href="#i-plus"/></svg><span>New conversation</span></div>
+                <div class="demo-nav-item"><svg><use href="#i-message"/></svg><span>Conversations</span></div>
+                <div class="demo-nav-item"><svg><use href="#i-file"/></svg><span>Files</span></div>
+                <div class="demo-nav-item"><svg><use href="#i-code"/></svg><span>Tools</span></div>
+                <div class="demo-nav-item"><svg><use href="#i-settings"/></svg><span>Settings</span></div>
+              </div>
+              <div class="demo-workspace">
+                <div class="demo-workspace-top">
+                  <span>OpenJM workspace</span>
+                  <button class="demo-live" type="button" aria-label="Play product demo" aria-expanded="false" aria-controls="demo-video-panel" title="Play product demo"><span class="demo-live-dot"></span>Live</button>
+                </div>
+                <div class="demo-conversation" aria-hidden="true">
+                  <div class="demo-empty"><svg><use href="#i-message"/></svg><span>What would you like to work on?</span></div>
+                  <div class="demo-prompt"><svg><use href="#i-paperclip"/></svg><span>Ask anything...</span><span class="demo-send"><svg><use href="#i-send"/></svg></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="video-wrap" id="demo-video-panel" hidden>
+              <button class="demo-video-close" type="button" aria-label="Close product demo" title="Close product demo"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+              <video id="product-video" autoplay muted loop playsinline controls preload="auto" aria-label="OpenJM product demonstration">
+                <source src="resources/media/openjm-demo.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+        </div>
+        <div class="demo-script reveal" role="group" aria-label="Demo content">
+          <svg class="demo-connectors demo-connectors-lines" viewBox="0 0 1240 420" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M392 39 H432 Q448 39 448 55 V120"/><path pathLength="1" d="M816 159 H856 Q872 159 872 175 V220"/>
+          </svg>
+          <svg class="demo-connectors demo-connectors-nodes" viewBox="0 0 1240 420" preserveAspectRatio="none" aria-hidden="true">
+            <circle cx="392" cy="39" r="9"/><circle cx="448" cy="120" r="9"/>
+            <circle cx="816" cy="159" r="9"/><circle cx="872" cy="220" r="9"/>
+          </svg>
+          <article class="demo-step is-active" data-stage="0">
+            <div class="demo-step-head"><span class="step-marker">1</span><h3>Step 1 — Share what you need</h3></div>
+            <div class="demo-detail"><span class="demo-detail-icon"><svg aria-hidden="true"><use href="#i-file"/></svg></span><div><span class="field-label">Attached file</span><p>Project brief.pdf</p></div></div>
+            <div class="demo-detail"><span class="demo-detail-icon"><svg aria-hidden="true"><use href="#i-message"/></svg></span><div><span class="field-label">User request</span><p>Analyse this brief and turn it into an action plan with priorities and next steps.</p></div></div>
+          </article>
+          <article class="demo-step" data-stage="1">
+            <div class="demo-step-head"><span class="step-marker">2</span><h3>Step 2 — Analyse the content</h3></div>
+            <div class="demo-detail"><span class="demo-detail-icon demo-spinner"><svg aria-hidden="true"><use href="#i-loader"/></svg></span><div><span class="field-label">Processing status</span><p>Analysing the document and organising the information...</p></div></div>
+          </article>
+          <article class="demo-step" data-stage="2">
+            <div class="demo-step-head"><span class="step-marker">3</span><h3>Step 3 — Get a useful result</h3></div>
+            <div class="demo-result" role="img" aria-label="Organised response with text and a chart"><span class="demo-result-file"><svg aria-hidden="true"><use href="#i-file"/></svg></span><span class="demo-result-lines"><i></i><i></i><i></i></span><span class="demo-result-chart"><i></i><i></i><i></i><i></i></span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section ease-section ease-scroll-sequence" aria-labelledby="ease-title">
+      <div class="shell ease-layout">
+        <div class="ease-head reveal"><h2 class="section-title" id="ease-title">Start with what you need Develop it as far as you want</h2><p class="section-copy">Explain your goal in your own words, add the necessary context, and continue working within a clear and organised conversation.</p></div>
+        <div class="journey">
+          <svg class="journey-connectors journey-connectors-lines" viewBox="0 0 92 700" aria-hidden="true">
+            <path pathLength="1" d="M75 82 H38 Q21 82 21 99 V248 Q21 264 39 264 H43 Q60 264 60 281 V398 Q60 414 43 414 H39 Q21 414 21 431 V540 Q21 556 38 556 H75"/>
+          </svg>
+          <svg class="journey-connectors journey-connectors-nodes" viewBox="0 0 92 700" aria-hidden="true">
+            <circle cx="75" cy="82" r="9"/><circle cx="60" cy="312" r="9"/><circle cx="75" cy="556" r="9"/>
+          </svg>
+          <article class="journey-card reveal"><div class="journey-icon"><img src="resources/iconos/conversation.svg" alt=""></div><h3>Write naturally</h3><p>Ask questions or describe a task as you would explain it to another person.</p></article>
+          <article class="journey-card reveal"><div class="journey-icon"><svg aria-hidden="true"><use href="#i-file"/></svg></div><h3>Add the necessary context</h3><p>Include images, documents, or code to work directly with their content.</p></article>
+          <article class="journey-card reveal"><div class="journey-icon"><svg aria-hidden="true"><use href="#i-chart"/></svg></div><h3>Continue developing your work</h3><p>Explore further, refine the results, and keep moving forward without starting from scratch in every interaction.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section benefits-section benefits-auto-sequence" id="benefits" aria-labelledby="benefits-title">
+      <div class="shell benefits-stage">
+        <div class="benefits-copy benefit-auto-trigger reveal"><h2 class="section-title" id="benefits-title">Everything you need<br>all in one place</h2><p class="section-copy">Work with greater clarity, keep your information accessible, and get more value from every conversation.</p></div>
+
+        <svg class="benefit-connectors benefit-connectors-lines" viewBox="0 0 1360 980" preserveAspectRatio="none" aria-hidden="true">
+          <path pathLength="1" d="M390 430H456C478 430 490 430 500 430"/>
+          <path pathLength="1" d="M840 146H682C664 146 650 160 650 178V230"/>
+          <path pathLength="1" d="M610 490V610"/>
+          <path pathLength="1" d="M720 430H804Q820 430 820 446V520Q820 550 850 550H1048H1088Q1110 550 1110 572V610"/>
+        </svg>
+        <svg class="benefit-connectors benefit-connectors-nodes" viewBox="0 0 1360 980" preserveAspectRatio="none" aria-hidden="true">
+          <circle cx="390" cy="430" r="9"/><circle cx="500" cy="430" r="9"/>
+          <circle cx="840" cy="146" r="9"/><circle cx="650" cy="230" r="9"/>
+          <circle cx="610" cy="490" r="9"/><circle cx="610" cy="610" r="9"/>
+          <circle cx="720" cy="430" r="9"/><circle cx="1110" cy="610" r="9"/>
+        </svg>
+
+        <div class="benefit-orbit reveal" aria-hidden="true"><img src="resources/media/colibri.svg" alt=""></div>
+
+        <article class="benefit-panel benefit-conversations reveal">
+          <div class="benefit-feature-head"><span class="benefit-icon"><img src="resources/iconos/conversation.svg" alt=""></span><div><h3>Organised conversations</h3><p>Keep your work structured and easy to return to whenever you need it.</p></div></div>
+          <div class="conversation-list" aria-label="Example conversations">
+            <div class="conversation-row is-active"><span class="row-icon"><img src="resources/iconos/conversation.svg" alt=""></span><span><strong>Product planning</strong><small>12 messages &middot; Today</small></span><b aria-hidden="true">+</b></div>
+            <div class="conversation-row"><span class="row-icon"><img src="resources/iconos/conversation.svg" alt=""></span><span><strong>Research insights</strong><small>8 messages &middot; Yesterday</small></span></div>
+            <div class="conversation-row"><span class="row-icon"><img src="resources/iconos/conversation.svg" alt=""></span><span><strong>Go-to-market</strong><small>16 messages &middot; 3 days ago</small></span></div>
+            <div class="conversation-row"><span class="row-icon"><img src="resources/iconos/conversation.svg" alt=""></span><span><strong>Customer feedback</strong><small>9 messages &middot; Last week</small></span></div>
+          </div>
+        </article>
+
+        <article class="benefit-panel benefit-files reveal">
+          <div class="benefit-feature-head"><span class="benefit-icon"><svg aria-hidden="true"><use href="#i-file"/></svg></span><div><h3>Documents and files</h3><p>Work with your files directly within each conversation.</p></div><button class="upload-file" type="button"><svg aria-hidden="true"><use href="#i-upload"/></svg>Upload file</button></div>
+          <div class="file-list" aria-label="Example files">
+            <div class="file-row"><span class="row-icon"><svg aria-hidden="true"><use href="#i-file"/></svg></span><span><strong>Product strategy.pdf</strong><small>PDF &middot; 2.4 MB</small></span><b aria-hidden="true">...</b></div>
+            <div class="file-row"><span class="row-icon"><svg aria-hidden="true"><use href="#i-file"/></svg></span><span><strong>Roadmap.png</strong><small>PNG &middot; 1.1 MB</small></span><b aria-hidden="true">...</b></div>
+            <div class="file-row"><span class="row-icon row-icon-green"><svg aria-hidden="true"><use href="#i-list"/></svg></span><span><strong>Research data.xlsx</strong><small>XLSX &middot; 890 KB</small></span><b aria-hidden="true">...</b></div>
+          </div>
+        </article>
+
+        <article class="benefit-panel benefit-tools reveal">
+          <div class="benefit-feature-head"><span class="benefit-icon"><svg aria-hidden="true"><use href="#i-search"/></svg></span><div><h3>Search tools and capabilities</h3><p>Access more options to explore, analyse, and achieve better results.</p></div></div>
+          <div class="benefit-search"><svg aria-hidden="true"><use href="#i-search"/></svg><span>Search conversations, files, or tools...</span><kbd>CMD K</kbd></div>
+          <div class="tool-actions"><span><svg aria-hidden="true"><use href="#i-chart"/></svg>Analyse</span><span><svg aria-hidden="true"><use href="#i-file"/></svg>Summarise</span><span><svg aria-hidden="true"><use href="#i-plus"/></svg>Create</span></div>
+        </article>
+
+        <article class="benefit-panel benefit-controls reveal">
+          <div class="benefit-feature-head"><span class="benefit-icon"><svg aria-hidden="true"><use href="#i-settings"/></svg></span><div><h3>Usage and settings control</h3><p>Manage your usage, preferences, and experience from one place.</p></div></div>
+          <div class="control-list">
+            <div class="control-row usage-row"><span class="row-icon row-icon-green"><svg aria-hidden="true"><use href="#i-chart"/></svg></span><span><strong>Usage</strong><i><em></em></i></span><small>78%</small></div>
+            <div class="control-row"><span class="row-icon"><svg aria-hidden="true"><use href="#i-settings"/></svg></span><span><strong>Settings</strong></span><b aria-hidden="true">+</b></div>
+            <div class="control-row"><span class="row-icon"><svg aria-hidden="true"><use href="#i-users"/></svg></span><span><strong>Preferences</strong></span><b aria-hidden="true">+</b></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section plans-section" id="plans" aria-labelledby="plans-title">
+      <div class="shell">
+        <div class="plans-header reveal"><h2 class="section-title" id="plans-title">Start for free Increase your capacity when you need it</h2><p class="section-copy">Explore essential features at no cost and access more advanced models, tools, and higher limits as your needs grow.</p></div>
+        <div class="plans-grid">
+          <article class="plan-card plan-free reveal">
+            <div class="plan-heading"><h3>Free</h3><span class="current-plan">Current Plan</span></div><div class="plan-price"><strong>$0.00</strong><span>/ month</span></div><p class="plan-tagline">Try everything that matters.</p>
+            <ul class="plan-features">
+              <li><svg><use href="#i-clock"/></svg><span>Weekly work hours</span><strong>5 hours</strong></li>
+              <li><svg><use href="#i-bulb"/></svg><span>Advanced reasoning</span><em>Off</em></li>
+              <li><svg><use href="#i-code"/></svg><span>Run Python code</span><i class="feature-off" aria-label="Not included"></i></li>
+              <li><svg><use href="#i-file"/></svg><span>Analyze files and documents</span><svg class="feature-check"><use href="#i-check"/></svg></li>
+              <li><svg><use href="#i-image"/></svg><span>Understand images</span><svg class="feature-check"><use href="#i-check"/></svg></li>
+              <li><svg><use href="#i-search"/></svg><span>Search the web</span><svg class="feature-check"><use href="#i-check"/></svg></li>
+              <li><svg><use href="#i-clock"/></svg><span>Remember past work</span><i class="feature-off" aria-label="Not included"></i></li>
+              <li><svg><use href="#i-list"/></svg><span>Background work</span><i class="feature-off" aria-label="Not included"></i></li>
+              <li><svg><use href="#i-layers"/></svg><span>Simultaneous tasks</span><strong>1 at a time</strong></li>
+              <li><svg><use href="#i-rocket"/></svg><span>Response priority</span><strong>Lowest</strong></li>
+              <li><svg><use href="#i-upload"/></svg><span>Upload limit per file</span><strong>25 MiB</strong></li>
+              <li><svg><use href="#i-file"/></svg><span>Songs per month</span><strong>3</strong></li>
+              <li><svg><use href="#i-file"/></svg><span>Videos per month</span><i class="feature-off" aria-label="Not included"></i></li>
+            </ul>
+          </article>
+
+          <article class="plan-card plan-regular reveal">
+            <div class="plan-heading"><h3>Regular</h3></div><div class="plan-price"><strong>$5.00</strong><span>/ month</span></div><p class="plan-tagline">A full working week.</p>
+            <ul class="plan-features">
+              <li><svg><use href="#i-clock"/></svg><span>Weekly work hours</span><strong>42 hours</strong></li>
+              <li><svg><use href="#i-bulb"/></svg><span>Advanced reasoning</span><strong>On</strong></li>
+              <li><svg><use href="#i-code"/></svg><span>Run Python code</span><svg class="feature-check"><use href="#i-check"/></svg></li>
+              <li><svg><use href="#i-file"/></svg><span>Analyze files and documents</span><svg class="feature-check"><use href="#i-check"/></svg></li>
+              <li><svg><use href="#i-image"/></svg><span>Understand images</span><svg class="feature-check"><use href="#i-check"/></svg></li>
+              <li><svg><use href="#i-search"/></svg><span>Search the web</span><svg class="feature-check"><use href="#i-check"/></svg></li>
+              <li><svg><use href="#i-clock"/></svg><span>Remember past work</span><svg class="feature-check"><use href="#i-check"/></svg></li>
+              <li><svg><use href="#i-list"/></svg><span>Background work</span><svg class="feature-check"><use href="#i-check"/></svg></li>
+              <li><svg><use href="#i-layers"/></svg><span>Simultaneous tasks</span><strong>3 at a time</strong></li>
+              <li><svg><use href="#i-rocket"/></svg><span>Response priority</span><strong>Normal</strong></li>
+              <li><svg><use href="#i-upload"/></svg><span>Upload limit per file</span><strong>25 MiB</strong></li>
+              <li><svg><use href="#i-file"/></svg><span>Songs per month</span><strong>30</strong></li>
+              <li><svg><use href="#i-file"/></svg><span>Videos per month</span><strong>10</strong></li>
+            </ul>
+          </article>
+
+          <article class="plan-card plan-pro reveal">
+            <div class="plan-heading"><h3>Pro</h3></div><div class="plan-price"><strong>$10.00</strong><span>/ month</span></div><p class="plan-tagline">Stop counting.</p>
+            <ul class="plan-features">
+              <li><svg><use href="#i-clock"/></svg><span>Weekly work hours</span><strong>140 hours</strong></li>
+              <li><svg><use href="#i-bulb"/></svg><span>Advanced reasoning</span><strong>On + deep</strong></li>
+              <li><svg><use href="#i-code"/></svg><span>Run Python code</span><svg class="feature-check"><use href="#i-check"/></svg></li>
+              <li><svg><use href="#i-file"/></svg><span>Analyze files and documents</span><svg class="feature-check"><use href="#i-check"/></svg></li>
+              <li><svg><use href="#i-image"/></svg><span>Understand images</span><svg class="feature-check"><use href="#i-check"/></svg></li>
+              <li><svg><use href="#i-search"/></svg><span>Search the web</span><svg class="feature-check"><use href="#i-check"/></svg></li>
+              <li><svg><use href="#i-clock"/></svg><span>Remember past work</span><svg class="feature-check"><use href="#i-check"/></svg></li>
+              <li><svg><use href="#i-list"/></svg><span>Background work</span><svg class="feature-check"><use href="#i-check"/></svg></li>
+              <li><svg><use href="#i-layers"/></svg><span>Simultaneous tasks</span><strong>8 at a time</strong></li>
+              <li><svg><use href="#i-rocket"/></svg><span>Response priority</span><strong>Highest</strong></li>
+              <li><svg><use href="#i-upload"/></svg><span>Upload limit per file</span><strong>25 MiB</strong></li>
+              <li><svg><use href="#i-file"/></svg><span>Songs per month</span><strong>150</strong></li>
+              <li><svg><use href="#i-file"/></svg><span>Videos per month</span><strong>50</strong></li>
+            </ul>
+          </article>
+
+          <article class="plan-card plan-unlimited reveal">
+            <div class="plan-heading"><h3>Unlimited</h3></div><p class="unlimited-lead">Need to go beyond?</p><div class="unlimited-copy"><p>Add credits whenever you need more room beyond your weekly limits from your monthly plan.</p><strong>Keep full access while your balance covers the extra work.</strong></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section faq-section" id="faq" aria-labelledby="faq-title">
+      <div class="shell faq-layout">
+        <div class="faq-intro reveal"><h2 class="section-title" id="faq-title">The essentials before you get started</h2><p class="section-copy">Learn how the platform works, what each plan includes, and how you can get started.</p></div>
+        <div class="faq-list reveal">
+          <details><summary>What is OpenJM?</summary><div class="faq-answer"><p>OpenJM is an artificial intelligence platform created in Jamaica for researching, writing, organising information, analysing files, and developing ideas through natural conversations.</p></div></details>
+          <details><summary>Can I get started for free?</summary><div class="faq-answer"><p>Yes. The Free plan costs $0 per month and includes 100,000 monthly tokens, standard AI models, basic document analysis, and up to 20 active conversations.</p></div></details>
+          <details><summary>What can I attach to a conversation?</summary><div class="faq-answer"><p>You can work with images, documents, and code files. Supported formats, maximum file sizes, and specific limits will be indicated within the platform.</p></div></details>
+          <details><summary>What is the difference between Free and Paid?</summary><div class="faq-answer"><p>Paid offers greater capacity, advanced models, unlimited conversations and history, advanced document analysis, research with sources, image generation and analysis, more connections, and priority support.</p></div></details>
+          <details><summary>How do additional credits work?</summary><div class="faq-answer"><p>Credits allow you to extend your usage when you exceed the limits included in your plan. An active Paid plan is required to access additional capacity and advanced features.</p></div></details>
+          <details><summary>Where is OpenJM available?</summary><div class="faq-answer"><p>OpenJM is available worldwide and supports interactions in multiple languages, allowing individuals and organisations to use the platform across different countries and contexts.</p></div></details>
+          <details><summary>How are my data and files managed?</summary><div class="faq-answer"><p>The handling of conversations, files, and personal data will be explained in the Privacy Policy and Terms of Service.</p><span class="editorial-status"><strong>Editorial status:</strong> This response must not be published until the privacy, storage, and retention policies have been approved.</span></div></details>
+          <details><summary>What type of support will I receive?</summary><div class="faq-answer"><p>The Free plan includes access to the Help Centre. Paid plan users receive priority support.</p></div></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta-section" id="final-cta" aria-labelledby="cta-title">
+      <div class="shell cta-panel reveal">
+        <div class="cta-copy"><h2 id="cta-title">What comes next starts with a <span class="accent">conversation</span></h2><p>Start with an idea, a question, or a challenge and turn it into a useful result.</p><a class="button button-primary" href="#plans">Get started for free</a></div>
+        <div class="cta-visual" aria-hidden="true">
+          <div class="cta-scene">
+            <div class="cta-orbit cta-orbit-outer"><span class="cta-orbit-dot cta-dot-top"></span><span class="cta-orbit-dot cta-dot-bottom"></span><span class="cta-hex cta-hex-top"></span><span class="cta-hex cta-hex-bottom"></span></div>
+            <div class="cta-orbit cta-orbit-inner"></div>
+            <div class="cta-message cta-message-top"><span></span><span></span><span></span></div>
+            <div class="cta-message cta-message-bottom"><span></span><span></span><span></span></div>
+            <div class="bubble"><img class="cta-chat-icon" src="resources/iconos/chat-cta.svg" alt=""></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="footer">
+    <div class="shell">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="brand footer-logo" href="#top" aria-label="OpenJM home"><img class="footer-logo-image" src="resources/media/openjm-logo-negative.png" alt="" width="1452" height="596"></a>
+          <p>Practical artificial intelligence to think, create and move forward.</p>
+          <p>Built in Jamaica. Available worldwide.</p>
+        </div>
+        <div class="footer-col">
+          <h3>Explore</h3>
+          <ul><li><a href="#product">Products</a></li><li><a href="#use-cases">Use cases</a></li><li><a href="#benefits">Benefits</a></li><li><a href="#plans">Plans</a></li><li><a href="#faq">FAQ</a></li></ul>
+        </div>
+        <div class="footer-col">
+          <h3>Contact</h3>
+          <ul><li><a href="mailto:hola@openjm.example">hola@openjm.example</a></li><li><a href="tel:+18765550148">+1 (876) 555-0148</a></li><li>Kingston, Jamaica</li></ul>
+        </div>
+        <div class="footer-col">
+          <h3>Follow us</h3>
+          <ul><li>LinkedIn: OpenJM</li><li>Instagram: @openjm_demo</li><li>X: @openjm_demo</li></ul>
+        </div>
+        <div class="footer-col">
+          <h3>Legal</h3>
+          <ul><li><a href="#">Terms of Service</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">AI Policy</a></li></ul>
+        </div>
+        <div class="footer-col footer-cta">
+          <h3>Try OpenJM</h3>
+          <p>Start for free with a question, a project or an idea.</p>
+          <a class="button button-primary" href="#plans">Get started for free</a>
+        </div>
+      </div>
+      <div class="footer-bottom"><p>© 2026 OpenJM. All rights reserved.</p></div>
+    </div>
+  </footer>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/wheel-morph.js"></script>
+  <script src="assets/js/request-demo-3d.js"></script>
+  <script src="assets/js/hero-3d.js"></script>
+  <script src="assets/js/mobile-layout.js"></script>
+</body>
+</html>
